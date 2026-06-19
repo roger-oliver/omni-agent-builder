@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Omni Agent Builder Repo Registry",
+  "type": "object",
+  "required": ["projects"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "projects": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["clone_base_path", "stack_selection_mode", "repos", "branch_strategy", "github"],
+        "additionalProperties": false,
+        "properties": {
+          "clone_base_path": { "type": "string" },
+          "stack_selection_mode": { "type": "string", "enum": ["always_ask"] },
+          "repos": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["ssh_url", "local_path", "purpose"],
+              "additionalProperties": false,
+              "properties": {
+                "ssh_url": { "type": "string", "pattern": "^git@github.com:.+/.+\\.git$" },
+                "local_path": { "type": "string" },
+                "purpose": { "type": "string" }
+              }
+            }
+          },
+          "branch_strategy": {
+            "type": "object",
+            "required": ["development", "release_prefix", "production"],
+            "additionalProperties": false,
+            "properties": {
+              "development": { "type": "string" },
+              "release_prefix": { "type": "string" },
+              "production": { "type": "string" }
+            }
+          },
+          "github": {
+            "type": "object",
+            "required": ["api_auth_env", "auto_merge_to_develop", "human_approval_required_for_main"],
+            "additionalProperties": false,
+            "properties": {
+              "api_auth_env": { "type": "string", "const": "GITHUB_TOKEN" },
+              "auto_merge_to_develop": { "type": "boolean" },
+              "human_approval_required_for_main": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

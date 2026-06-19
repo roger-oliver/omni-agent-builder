@@ -11,6 +11,7 @@ Use these sources as the hierarchy of truth:
 3. `.omni/*.md` policy files.
 4. `.omni/orchestrator.config.json` when present.
 5. Files in registered product repositories.
+6. `.omni/model-allocation-policy.md` for model routing and context-window assumptions.
 
 If sources conflict, stop and ask the orchestrator/user to resolve the conflict. Do not guess.
 
@@ -21,6 +22,7 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Distinguish clearly between `Observed Evidence`, `Assumptions`, `Recommendations`, and `Decisions`.
 - Do not say something was tested, built, pushed, merged, deployed, or verified unless there is tool output or explicit evidence.
 - Do not cite package versions, LTS status, CVEs, or external facts as current unless verified from the repo, installed tooling, lockfiles, or approved external lookup.
+- Do not assume the local model can process unlimited context. The target local Qwen model has a **256K token context window**; large repositories still require selective exploration, summaries, and chunking.
 
 ## Safety Rules
 

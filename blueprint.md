@@ -221,7 +221,11 @@ The implementation AI must validate against `https://opencode.ai/config.json` be
 
 ## 6. Local and Cloud Model Strategy
 
-Local-first execution uses vLLM. The default local model is expected to be Qwen3-Coder-Next 80B or equivalent, exposed through an OpenAI-compatible vLLM endpoint.
+Omni uses a hybrid local/cloud model strategy. Local-first execution uses vLLM, but not every agent should use the local model.
+
+The primary local model is expected to be Qwen3-Coder-Next 80B or equivalent, exposed through an OpenAI-compatible vLLM endpoint, with a target context limit of **256K tokens**. This large context window is a major design advantage for orchestration, code generation, code review, logging strategy, and privacy-sensitive repository work.
+
+However, 256K is still a limit. Agents must not blindly load entire large repositories. They should use selective exploration, chunking, summaries, and dedicated codebase search/explorer behavior when needed.
 
 Before final config is created, verify the real model name exposed by vLLM:
 
@@ -231,18 +235,20 @@ GET {VLLM_BASE_URL}/models
 
 Recommended allocation:
 
-| Agent category | Default model location | Notes |
-|---|---|---|
-| Orchestrator | Local vLLM | High-frequency coordination and privacy-sensitive context. |
-| Coding agents | Local vLLM | Source code should normally stay local. |
-| Test/review agents | Local vLLM | Frequent and tightly coupled to code. |
-| Legacy reverse engineering | Local vLLM first | Use chunking for large repos; cloud escalation only when justified. |
-| Security agents | Local tools + local model | Prefer rule engines and deterministic scanners. |
-| UI/UX designer | Cloud optional | May use Google/Gemini if multimodal or visual reasoning is needed. |
-| Complex architecture | Cloud optional | May use Anthropic/OpenAI for hard tradeoff analysis. |
-| Technical research | Cloud optional | May use cheaper/faster models when external research is needed. |
+| Agent Type | Recommended Model | Location | Reasoning |
+|---|---|---|---|
+| Orchestrator | Qwen3-Coder-Next 80B | Local vLLM, 256K context | High-frequency calls, low latency, privacy-sensitive. |
+| Backend/Frontend code generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Core coding work; code normally stays local. |
+| Code review / PR validation | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Consistent with code generator and repository context. |
+| Unit test generation | DeepSeek-Coder-V2 Lite | Local vLLM when available | Lightweight code/test generation. |
+| SAST security scanning | Rule engine + small local model | Local | Prefer deterministic scanners; LLM assists triage. |
+| UI/UX design | Gemini 3 Pro | Cloud | Multimodal and visual reasoning. |
+| Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud | One-off, high-complexity reasoning. |
+| Codebase search / explorer | Claude Haiku 4.5 | Cloud | Fast, low-cost classification and search. |
+| Documentation / librarian | Claude Sonnet 4.6 | Cloud | Documentation synthesis and live research when needed. |
+| Logging strategy / observability | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Close to implementation and code instrumentation. |
 
-Cloud providers should be configured as placeholders for OpenAI, Anthropic, and Google. Agents decide whether escalation is appropriate, but must record why in the decision log for significant decisions.
+Cloud providers should be configured as placeholders for OpenAI, Anthropic, and Google. Agents decide whether escalation is appropriate, but must record why in the decision log for significant decisions. If a configured model is unavailable, the orchestrator must not silently substitute; it must ask the user.
 
 ## 7. Agent File Strategy
 
@@ -417,11 +423,15 @@ No `backend-node-typescript-engineer` is planned. TypeScript/JavaScript are fron
 
 ### GitHub and PR Operations
 
-32. `github-operator`
+32. `codebase-explorer`
+    - Performs read-only codebase exploration and classification for registered repositories.
+    - Uses fast, low-cost cloud reasoning for structure discovery, conventions, build/test command identification, and implementation evidence gathering.
+
+33. `github-operator`
     - Performs GitHub API operations using `GITHUB_TOKEN` only.
     - Creates PRs, comments, labels, requests reviews, inspects PR status, and merges to `develop` when allowed.
 
-33. `pr-validator`
+34. `pr-validator`
     - Reviews PRs against requirements, ADRs, acceptance criteria, tests, lint/build status, security, dependencies, and traceability.
     - Comments failures on the PR.
     - Sends failed PRs back to the coding agent.
@@ -605,19 +615,22 @@ Recommended initial skills:
 1. `agent-operating-contract`
    - Shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
 
-2. `adr-writing`
+2. `model-allocation`
+   - How to route tasks between local Qwen 256K context, local lightweight coding models, and cloud specialist models.
+
+3. `adr-writing`
    - How to create and update ADRs.
 
-3. `github-workflow`
+4. `github-workflow`
    - How to work with registered repos, branches, PRs, and `GITHUB_TOKEN`.
 
-4. `dependency-selection`
+5. `dependency-selection`
    - How to choose packages without framework lock-in.
 
-5. `legacy-analysis`
+6. `legacy-analysis`
    - How to produce As-Is documentation.
 
-6. `pr-validation`
+7. `pr-validation`
    - How to validate PRs against requirements and acceptance criteria.
 
 ## 15. Commands to Consider
@@ -690,7 +703,7 @@ OpenCode commands can be added later in `opencode.json`. Recommended commands:
 
 ## 17. Known Conflicts Resolved
 
-1. **Agent count**: The system is not limited to 24 or 25 agents. The final roster includes 33 named agents including GitHub and PR-specific agents.
+1. **Agent count**: The system is not limited to 24 or 25 agents. The final roster includes 34 named agents including codebase exploration, GitHub, and PR-specific agents.
 2. **Node/TypeScript backend**: Excluded. TypeScript/JavaScript are frontend-focused unless this decision changes later.
 3. **Repo creation**: User creates repos. Agents never create repos.
 4. **GitHub authentication**: `GITHUB_TOKEN` only for API operations; SSH keys for Git transport.

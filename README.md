@@ -12,8 +12,8 @@ Implemented in this repo:
 - Manual OpenCode setup guide: `manual-opencode-setup.md`
 - Omni policy/config templates under `.omni/`
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 33 OpenCode agent prompt files under `.opencode/agent/`
-- 6 reusable OpenCode skills under `.opencode/skills/`
+- 34 OpenCode agent prompt files under `.opencode/agent/`
+- 7 reusable OpenCode skills under `.opencode/skills/`
 
 No `opencode.json` is committed. OpenCode configuration is intentionally left for manual setup.
 
@@ -46,12 +46,13 @@ No `opencode.json` is committed. OpenCode configuration is intentionally left fo
 │   ├── dependency-selection-policy.md
 │   ├── github-policy.md
 │   ├── decision-log-policy.md
-│   └── legacy-analysis-policy.md
+│   ├── model-allocation-policy.md
+    │   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 33 agent prompt files
+    │   └── 34 agent prompt files
     └── skills/
-        └── 5 reusable skill folders
+        └── 7 reusable skill folders
 ```
 
 ## Important Files
@@ -75,6 +76,10 @@ JSON schema for validating the Omni repo registry.
 ### `.omni/agent-operating-contract.md`
 
 Shared non-negotiable behavior contract for all agents. It defines source-of-truth hierarchy, anti-hallucination rules, required response shape, safety rules, repository checklist, and artifact quality bar.
+
+### `.omni/model-allocation-policy.md`
+
+Hybrid local/cloud model routing guidance. It emphasizes the local Qwen3-Coder-Next 80B vLLM model's **256K token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
 
 ### `.opencode/agent/`
 
@@ -146,6 +151,7 @@ Governance and documentation agents:
 
 GitHub and PR agents:
 
+- `codebase-explorer`
 - `github-operator`
 - `pr-validator`
 
@@ -154,6 +160,7 @@ GitHub and PR agents:
 Reusable skills currently defined:
 
 - `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
+- `model-allocation`: local/cloud model routing, including local Qwen 256K context and cloud specialist models.
 - `adr-writing`: creating and updating Architecture Decision Records.
 - `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
 - `dependency-selection`: package/framework selection without lock-in.
@@ -180,7 +187,23 @@ Suggested OpenCode defaults:
 - Default agent: `omni-orchestrator`
 - Skills path: `.opencode/skills`
 - Local model provider: vLLM using OpenAI-compatible API
+- Primary local model: Qwen3-Coder-Next 80B with **256K context**
+- Optional local lightweight model: DeepSeek-Coder-V2 Lite for unit-test generation and SAST assistance
 - Cloud provider placeholders: OpenAI, Anthropic, Google
+
+Recommended model allocation:
+
+| Work type | Recommended model | Location |
+|---|---|---|
+| Orchestration | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| Backend/frontend code generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| PR validation/code review | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| Unit test generation | DeepSeek-Coder-V2 Lite | Local vLLM when available |
+| SAST assistance | Rule engine + DeepSeek-Coder-V2 Lite | Local |
+| UI/UX design | Gemini 3 Pro | Cloud |
+| Complex architecture | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
+| Codebase exploration | Claude Haiku 4.5 | Cloud |
+| Documentation/librarian | Claude Sonnet 4.6 | Cloud |
 
 Before finalizing the model config, query your vLLM endpoint and confirm the real model ID:
 

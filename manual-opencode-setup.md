@@ -38,7 +38,45 @@ The current agent files use this placeholder:
 vllm/qwen3-coder-next-80b
 ```
 
+The primary local Qwen model is expected to provide a **256K token context window**. This should be preserved in the vLLM deployment because the orchestrator, coding agents, PR validator, and legacy-analysis flows rely on large-context local reasoning.
+
+Some agent files also reference this optional local lightweight model:
+
+```text
+vllm/deepseek-coder-v2-lite
+```
+
+If you do not deploy DeepSeek-Coder-V2 Lite through vLLM, manually change those agent model fields to another available local model before restarting OpenCode.
+
 If your vLLM server exposes a different model name, update the agent files or configure an equivalent provider/model alias manually.
+
+## 2.1 Cloud model allocation
+
+Not all agents use the local model. The intended routing is:
+
+| Agent/work type | Recommended model | Location |
+|---|---|---|
+| Orchestrator | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| Backend/frontend code generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| Code review / PR validation | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+| Unit test generation | DeepSeek-Coder-V2 Lite | Local vLLM when available |
+| SAST security scanning | Rule engine + small local model | Local |
+| UI/UX design | Gemini 3 Pro | Cloud |
+| Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
+| Codebase search / explorer | Claude Haiku 4.5 | Cloud |
+| Documentation / librarian | Claude Sonnet 4.6 | Cloud |
+| Logging strategy / observability | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
+
+Current cloud-oriented agent defaults:
+
+```text
+solution-architect      -> anthropic/claude-sonnet-4-6
+ui-ux-designer          -> google/gemini-3-pro
+codebase-explorer       -> anthropic/claude-haiku-4-5
+technical-writer        -> anthropic/claude-sonnet-4-6
+```
+
+If your OpenCode provider catalog uses different model IDs, update the corresponding agent frontmatter manually. Do not leave agent files pointing at unavailable models.
 
 ## 3. Suggested `opencode.json`
 

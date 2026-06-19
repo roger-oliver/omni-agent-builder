@@ -135,3 +135,7 @@ The user must create those GitHub repositories manually before registration.
 ## 6. Restart OpenCode
 
 OpenCode loads config, agents, and skills at startup. After changing `opencode.json`, `.opencode/agent/*.md`, or `.opencode/skills/**/SKILL.md`, quit and restart OpenCode.
+
+## 7. Agent operating contract
+
+All agents reference `.omni/agent-operating-contract.md`. Keep this file aligned with your desired safety, anti-hallucination, repository, and response-shape rules. If you change it, restart OpenCode so future sessions have the updated context available through the agent prompts and skills.

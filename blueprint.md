@@ -602,19 +602,22 @@ Reusable skills should live under:
 
 Recommended initial skills:
 
-1. `adr-writing`
+1. `agent-operating-contract`
+   - Shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
+
+2. `adr-writing`
    - How to create and update ADRs.
 
-2. `github-workflow`
+3. `github-workflow`
    - How to work with registered repos, branches, PRs, and `GITHUB_TOKEN`.
 
-3. `dependency-selection`
+4. `dependency-selection`
    - How to choose packages without framework lock-in.
 
-4. `legacy-analysis`
+5. `legacy-analysis`
    - How to produce As-Is documentation.
 
-5. `pr-validation`
+6. `pr-validation`
    - How to validate PRs against requirements and acceptance criteria.
 
 ## 15. Commands to Consider

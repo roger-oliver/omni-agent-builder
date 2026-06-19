@@ -11,8 +11,9 @@ Implemented in this repo:
 - Final blueprint: `blueprint.md`
 - Manual OpenCode setup guide: `manual-opencode-setup.md`
 - Omni policy/config templates under `.omni/`
+- Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
 - 33 OpenCode agent prompt files under `.opencode/agent/`
-- 5 reusable OpenCode skills under `.opencode/skills/`
+- 6 reusable OpenCode skills under `.opencode/skills/`
 
 No `opencode.json` is committed. OpenCode configuration is intentionally left for manual setup.
 
@@ -69,6 +70,10 @@ Example Omni repo registry. Copy it to `.omni/orchestrator.config.json` when onb
 ### `.omni/repo-registry.schema.json`
 
 JSON schema for validating the Omni repo registry.
+
+### `.omni/agent-operating-contract.md`
+
+Shared non-negotiable behavior contract for all agents. It defines source-of-truth hierarchy, anti-hallucination rules, required response shape, safety rules, repository checklist, and artifact quality bar.
 
 ### `.opencode/agent/`
 
@@ -147,6 +152,7 @@ GitHub and PR agents:
 
 Reusable skills currently defined:
 
+- `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
 - `adr-writing`: creating and updating Architecture Decision Records.
 - `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
 - `dependency-selection`: package/framework selection without lock-in.

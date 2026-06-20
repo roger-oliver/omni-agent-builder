@@ -78,7 +78,7 @@ Shared non-negotiable behavior contract for all agents. It defines source-of-tru
 
 ### `.omni/model-allocation-policy.md`
 
-Hybrid local/cloud model routing guidance. It emphasizes the local Qwen3-Coder-Next 80B vLLM model's **256K token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
+Hybrid local/cloud model routing guidance. It emphasizes the local GadflyII/Qwen3-Coder-Next-NVFP4 vLLM model's **131072-token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
 
 ### `.opencode/agent/`
 
@@ -159,7 +159,7 @@ GitHub and PR agents:
 Reusable skills currently defined:
 
 - `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
-- `model-allocation`: local/cloud model routing, including local Qwen 256K context and cloud specialist models.
+- `model-allocation`: local/cloud model routing, including the shared local GadflyII/Qwen3-Coder-Next-NVFP4 131072-token context model and cloud specialist models.
 - `adr-writing`: creating and updating Architecture Decision Records.
 - `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
 - `dependency-selection`: package/framework selection without lock-in.
@@ -186,19 +186,19 @@ Suggested OpenCode defaults:
 - Default agent: `omni-orchestrator`
 - Skills path: `.opencode/skills`
 - Local model provider: vLLM using OpenAI-compatible API
-- Primary local model: Qwen3-Coder-Next 80B with **256K context**
-- Optional local lightweight model: DeepSeek-Coder-V2 Lite for unit-test generation and SAST assistance
+- Primary local model: GadflyII/Qwen3-Coder-Next-NVFP4 with **131072-token context**
+- Shared local model for unit-test generation and SAST assistance: GadflyII/Qwen3-Coder-Next-NVFP4
 - Cloud provider placeholders: OpenAI, Anthropic, Google
 
 Recommended model allocation:
 
 | Work type | Recommended model | Location |
 |---|---|---|
-| Orchestration | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
-| Backend/frontend code generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
-| PR validation/code review | Qwen3-Coder-Next 80B | Local vLLM, 256K context |
-| Unit test generation | DeepSeek-Coder-V2 Lite | Local vLLM when available |
-| SAST assistance | Rule engine + DeepSeek-Coder-V2 Lite | Local |
+| Orchestration | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Backend/frontend code generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| PR validation/code review | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| SAST assistance | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
 | UI/UX design | Gemini 3 Pro | Cloud |
 | Complex architecture | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
 | Codebase exploration | Claude Haiku 4.5 | Cloud |

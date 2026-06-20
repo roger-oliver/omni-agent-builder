@@ -1,7 +1,7 @@
 ---
 description: Designs SLOs, SLIs, dashboards, monitors, and alert thresholds.
 mode: subagent
-model: vllm/qwen3-coder-next-80b
+model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
 permission:
   edit: ask
   bash: ask

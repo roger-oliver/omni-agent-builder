@@ -1,7 +1,7 @@
 ---
 description: Designs API contracts such as OpenAPI, GraphQL, or gRPC specs.
 mode: subagent
-model: vllm/qwen3-coder-next-80b
+model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
 permission:
   edit: ask
   bash: ask

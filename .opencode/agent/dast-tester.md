@@ -1,7 +1,7 @@
 ---
 description: Performs safe dynamic security testing against approved staging URLs.
 mode: subagent
-model: vllm/qwen3-coder-next-80b
+model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
 permission:
   edit: ask
   bash: ask

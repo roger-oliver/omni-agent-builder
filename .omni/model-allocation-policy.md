@@ -23,8 +23,8 @@ This large context window should be emphasized and used for high-frequency, priv
 | Orchestrator | Qwen3-Coder-Next 80B | Local vLLM, 256K context | High-frequency calls, low latency, privacy-sensitive. |
 | Backend/Frontend code generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Core coding work; code normally stays local. |
 | Code review / PR validation | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Consistent with code generator and repository context. |
-| Unit test generation | DeepSeek-Coder-V2 Lite | Local vLLM when available | Lightweight code/test generation. |
-| SAST security scanning | Rule engine + small local model | Local | Prefer deterministic scanners; LLM assists triage. |
+| Unit test generation | Qwen3-Coder-Next 80B | Local vLLM, 256K context | Uses the shared local coding model to simplify infrastructure. |
+| SAST security scanning | Rule engine + Qwen3-Coder-Next 80B | Local vLLM, 256K context | Prefer deterministic scanners; shared local LLM assists triage. |
 | UI/UX design | Gemini 3 Pro | Cloud | Multimodal and visual reasoning. |
 | Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud | One-off, high-complexity reasoning. |
 | Codebase search / explorer | Claude Haiku 4.5 | Cloud | Fast, low-cost classification and search. |
@@ -36,8 +36,8 @@ This large context window should be emphasized and used for high-frequency, priv
 - `omni-orchestrator`: `vllm/qwen3-coder-next-80b`
 - Builder agents: `vllm/qwen3-coder-next-80b`
 - `pr-validator`: `vllm/qwen3-coder-next-80b`
-- `unit-test-generator`: `vllm/deepseek-coder-v2-lite`
-- `sast-scanner`: `vllm/deepseek-coder-v2-lite`
+- `unit-test-generator`: `vllm/qwen3-coder-next-80b`
+- `sast-scanner`: `vllm/qwen3-coder-next-80b`
 - `solution-architect`: `anthropic/claude-sonnet-4-6`
 - `ui-ux-designer`: `google/gemini-3-pro`
 - `codebase-explorer`: `anthropic/claude-haiku-4-5`

@@ -1,7 +1,7 @@
 ---
 description: Explores registered codebases for structure, conventions, dependencies, and implementation evidence before other agents make decisions.
 mode: subagent
-model: anthropic/claude-haiku-4-5
+model: opencode/claude-haiku-4-5
 permission:
   edit: deny
   bash: ask

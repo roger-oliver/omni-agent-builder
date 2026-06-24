@@ -1,7 +1,7 @@
 ---
 description: Creates developer documentation, API docs, onboarding docs, and release notes.
 mode: subagent
-model: anthropic/claude-sonnet-4-6
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

@@ -1,7 +1,7 @@
 ---
 description: Produces UX flows, wireframes, accessibility notes, and design tokens.
 mode: subagent
-model: google/gemini-3-pro
+model: opencode/gemini-3-pro
 permission:
   edit: ask
   bash: ask

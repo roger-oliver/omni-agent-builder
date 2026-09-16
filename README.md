@@ -10,12 +10,14 @@ Implemented in this repo:
 
 - Final blueprint: `blueprint.md`
 - Manual OpenCode setup guide: `manual-opencode-setup.md`
-- Omni policy/config templates under `.omni/`
+- `opencode.json`: root OpenCode configuration (default agent, providers, permissions, skills)
+- `.omni/orchestrator.config.json`: active repo registry for product repositories
+- `.omni/orchestrator.config.example.json`: example/template repo registry
+- `.omni/repo-registry.schema.json`: JSON schema for validating the registry
+- Omni policies under `.omni/` (stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 34 OpenCode agent prompt files under `.opencode/agent/`
+- 36 OpenCode agent prompt files under `.opencode/agent/`
 - 7 reusable OpenCode skills under `.opencode/skills/`
-
-No `opencode.json` is committed. OpenCode configuration is intentionally left for manual setup.
 
 ## Design Principles
 
@@ -35,27 +37,34 @@ No `opencode.json` is committed. OpenCode configuration is intentionally left fo
 ```text
 .
 ├── README.md
+├── opencode.json                  # Root OpenCode configuration
 ├── blueprint.md
 ├── initial-blueprint.md
 ├── all-history-conversation.md
 ├── manual-opencode-setup.md
 ├── .omni/
-│   ├── orchestrator.config.example.json
+│   ├── orchestrator.config.json          # Active repo registry
+│   ├── orchestrator.config.example.json  # Example/template repo registry
 │   ├── repo-registry.schema.json
+│   ├── agent-operating-contract.md
+│   ├── model-allocation-policy.md
 │   ├── stack-policy.md
 │   ├── dependency-selection-policy.md
 │   ├── github-policy.md
 │   ├── decision-log-policy.md
-│   ├── model-allocation-policy.md
-    │   └── legacy-analysis-policy.md
+│   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 34 agent prompt files
+    │   └── 36 agent prompt files
     └── skills/
         └── 7 reusable skill folders
 ```
 
 ## Important Files
+
+### `opencode.json`
+
+Root OpenCode configuration. Sets the default agent to `omni-orchestrator`, configures providers (vLLM, OpenAI, Anthropic, Google), loads skills from `.opencode/skills`, and defines security permissions (deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch).
 
 ### `blueprint.md`
 
@@ -68,6 +77,10 @@ Manual setup instructions for OpenCode. This includes suggested provider configu
 ### `.omni/orchestrator.config.example.json`
 
 Example Omni repo registry. Copy it to `.omni/orchestrator.config.json` when onboarding real product repositories, then replace example values with real private GitHub SSH URLs and local paths.
+
+### `.omni/orchestrator.config.json`
+
+Active repo registry. The orchestrator reads this at runtime to know which product repos exist, their SSH URLs, local paths, branch strategy, and GitHub settings. Update this file with real values before starting product work.
 
 ### `.omni/repo-registry.schema.json`
 
@@ -167,9 +180,17 @@ Reusable skills currently defined:
 - `legacy-analysis`: read-only As-Is documentation for legacy repos.
 - `pr-validation`: PR validation against requirements, ADRs, tests, security, and traceability.
 
-## Manual OpenCode Configuration
+## OpenCode Configuration
 
-This repo intentionally does not include `opencode.json`. Create it manually using `manual-opencode-setup.md` when ready.
+`opencode.json` is included in this repo with the following defaults:
+
+- Default agent: `omni-orchestrator`
+- Primary model: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4` (131072-token context)
+- Skills path: `.opencode/skills`
+- Providers: vLLM (local), OpenAI, Anthropic, Google
+- Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
+
+To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.
 
 Required or likely environment variables:
 
@@ -272,16 +293,18 @@ Forbidden unless policy changes:
 Useful local checks for this repository:
 
 ```bash
-python3 -m json.tool .omni/orchestrator.config.example.json >/tmp/orchestrator-config-check.json
-python3 -m json.tool .omni/repo-registry.schema.json >/tmp/repo-schema-check.json
+python3 -m json.tool opencode.json >/dev/null
+python3 -m json.tool .omni/orchestrator.config.json >/dev/null
+python3 -m json.tool .omni/orchestrator.config.example.json >/dev/null
+python3 -m json.tool .omni/repo-registry.schema.json >/dev/null
 git diff --check
 ```
 
 ## Notes for Future Builders
 
 - Do not generate product code in this repo.
-- Do not create or edit `opencode.json` unless the user explicitly asks.
 - Do not commit secrets.
 - Keep agent files focused and separate.
 - Ask before adding optional plugins.
-- Validate OpenCode config manually against `https://opencode.ai/config.json` if/when config is created.
+- Validate OpenCode config against `https://opencode.ai/config.json` after changes.
+- After editing `opencode.json`, `.opencode/agent/*.md`, or `.opencode/skills/**/SKILL.md`, restart OpenCode.

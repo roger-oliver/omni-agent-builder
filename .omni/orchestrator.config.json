@@ -1,0 +1,41 @@
+{
+  "$schema": "./repo-registry.schema.json",
+  "projects": {
+    "my-new-product": {
+      "clone_base_path": "~/workspace/roger-projects",
+      "stack_selection_mode": "always_ask",
+      "repos": {
+        "decision_logs": {
+          "ssh_url": "git@github.com:YOUR_ORG/my-new-product-decisions.git",
+          "local_path": "~/workspace/roger-projects/my-new-product-decisions",
+          "purpose": "strategy, requirements, ADRs, traceability, release notes"
+        },
+        "ui_design": {
+          "ssh_url": "git@github.com:YOUR_ORG/my-new-product-ui.git",
+          "local_path": "~/workspace/roger-projects/my-new-product-ui",
+          "purpose": "wireframes, design tokens, UX specs, exported prototypes"
+        },
+        "frontend": {
+          "ssh_url": "git@github.com:YOUR_ORG/my-new-product-frontend.git",
+          "local_path": "~/workspace/roger-projects/my-new-product-frontend",
+          "purpose": "frontend source code"
+        },
+        "backend": {
+          "ssh_url": "git@github.com:YOUR_ORG/my-new-product-backend.git",
+          "local_path": "~/workspace/roger-projects/my-new-product-backend",
+          "purpose": "backend source code"
+        }
+      },
+      "branch_strategy": {
+        "development": "develop",
+        "release_prefix": "release/",
+        "production": "main"
+      },
+      "github": {
+        "api_auth_env": "GITHUB_TOKEN",
+        "auto_merge_to_develop": true,
+        "human_approval_required_for_main": true
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ---
-name: plan
+name: solution-architect
 mode: subagent
 model: opencode/claude-sonnet-4-6
 description: Strict multi-phase architect. Produces exhaustive blueprints from data model to API endpoints following engineering best practices.

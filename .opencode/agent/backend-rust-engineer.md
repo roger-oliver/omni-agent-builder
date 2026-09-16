@@ -1,7 +1,7 @@
 ---
-name: build
+name: rust-engineer
 mode: subagent
-model: model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4  # or your preferred Rust 1.96.0 capable model
+model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
 description: Full-access Rust engineer implementing plans with TDD, strict best practices, and approval gates.
 permission:
   read: allow

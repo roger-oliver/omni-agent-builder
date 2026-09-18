@@ -31,6 +31,32 @@
   "skills": {
     "paths": [".opencode/skills"]
   },
+  "command": {
+    "omni-onboard-product": {
+      "description": "Register product repos after the user creates them",
+      "template": "Read .omni/orchestrator.config.json and .omni/orchestrator.config.example.json. Ask the user for the product name, GitHub org, and which repos to register (decision_logs, ui_design, frontend, backend, legacy). Update the orchestrator config with the provided values. Confirm the registration is complete."
+    },
+    "omni-new-feature": {
+      "description": "Start strategy/design/build flow for a feature",
+      "template": "Ask the user for the feature name, description, and which product repos are involved. Then orchestrate the full SDLC flow: business interpretation, use case modeling, prioritization, requirements writing, solution architecture, data schema design, API contract design, implementation, testing, security scanning, PR validation, and documentation. Follow the blueprint phases in order."
+    },
+    "omni-as-is": {
+      "description": "Run legacy analysis on a registered legacy repo",
+      "template": "Read .omni/orchestrator.config.json to find the legacy repo entry. Ask the user which legacy repo to analyze. Delegate to legacy-python-analyst, legacy-csharp-analyst, or schema-extractor based on the codebase language. Produce As-Is documentation including architecture, data models, API surface, and dependencies."
+    },
+    "omni-pr-review": {
+      "description": "Validate a PR against requirements, ADRs, tests, security, and traceability",
+      "template": "Ask the user for the PR URL or branch name. Read the PR diff, related requirements, ADRs, acceptance criteria, and traceability matrix. Run pr-validator to check for: requirements coverage, ADR compliance, test presence, security issues, dependency risks, and traceability completeness. Report pass/fail with specific findings."
+    },
+    "omni-release": {
+      "description": "Prepare release branch and release notes",
+      "template": "Ask the user for the release version and scope. Create a release branch from develop, update version numbers, generate release notes from the decision log and PR history, and prepare the branch for human approval before merging to main."
+    },
+    "omni-update-traceability": {
+      "description": "Refresh the Requirements Traceability Matrix",
+      "template": "Read the current RTM from the decision_logs repo. Scan all requirements, ADRs, implementations, and tests. Update the traceability matrix to reflect current coverage. Report any gaps where requirements lack implementations or tests."
+    }
+  },
   "permission": {
     "read": "allow",
     "glob": "allow",

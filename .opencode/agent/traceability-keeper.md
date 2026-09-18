@@ -1,7 +1,7 @@
 ---
 description: Maintains requirements traceability across documents, tests, PRs, ADRs, and releases.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-haiku-4-5
 permission:
   edit: ask
   bash: ask

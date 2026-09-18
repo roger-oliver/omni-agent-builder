@@ -1,7 +1,7 @@
 ---
 description: Prioritizes requirements and use cases using explicit ranking criteria.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

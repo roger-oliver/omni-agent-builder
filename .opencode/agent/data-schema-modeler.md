@@ -1,7 +1,7 @@
 ---
 description: Designs data models, ERDs, dictionaries, indexes, and migration strategy.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

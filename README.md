@@ -92,7 +92,7 @@ Shared non-negotiable behavior contract for all agents. It defines source-of-tru
 
 ### `.omni/model-allocation-policy.md`
 
-Hybrid local/cloud model routing guidance. It emphasizes the local GadflyII/Qwen3-Coder-Next-NVFP4 vLLM model's **131072-token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
+Hybrid local/cloud model routing guidance. It emphasizes the local Qwen/Qwen3.8-27B vLLM model's **131072-token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
 
 ### `.opencode/agent/`
 
@@ -173,7 +173,7 @@ GitHub and PR agents:
 Reusable skills currently defined:
 
 - `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
-- `model-allocation`: local/cloud model routing, including the shared local GadflyII/Qwen3-Coder-Next-NVFP4 131072-token context model and cloud specialist models.
+- `model-allocation`: local/cloud model routing, including the shared local Qwen/Qwen3.8-27B 131072-token context model and cloud specialist models.
 - `adr-writing`: creating and updating Architecture Decision Records.
 - `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
 - `dependency-selection`: package/framework selection without lock-in.
@@ -185,7 +185,7 @@ Reusable skills currently defined:
 `opencode.json` is included in this repo with the following defaults:
 
 - Default agent: `omni-orchestrator`
-- Primary model: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4` (131072-token context)
+- Primary model: `vllm/Qwen/Qwen3.8-27B` (131072-token context)
 - Skills path: `.opencode/skills`
 - Providers: vLLM (local), OpenAI, Anthropic, Google
 - Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
@@ -208,18 +208,17 @@ Suggested OpenCode defaults:
 - Default agent: `omni-orchestrator`
 - Skills path: `.opencode/skills`
 - Local model provider: vLLM using OpenAI-compatible API
-- Primary local model: GadflyII/Qwen3-Coder-Next-NVFP4 with **131072-token context** (orchestrator, PR validation, unit tests, SAST)
-- Secondary local model: Qwen/Qwen3.8-27B (implementation, QA, DevOps, observability, GitHub)
+- Primary local model: Qwen/Qwen3.8-27B with **131072-token context** (orchestration, implementation, QA, DevOps, observability, GitHub, PR validation, unit tests, SAST)
 - Cloud provider placeholders: OpenAI, Anthropic, Google
 
 Recommended model allocation:
 
 | Work type | Recommended model | Location |
 |---|---|---|
-| Orchestration | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| PR validation/code review | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| SAST assistance | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Orchestration | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| PR validation/code review | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| SAST assistance | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
 | Strategy and definition | Claude Sonnet 4.6 | Cloud |
 | Design and architecture | Claude Sonnet 4.6 | Cloud |
 | Legacy analysis | Claude Sonnet 4.6 | Cloud |

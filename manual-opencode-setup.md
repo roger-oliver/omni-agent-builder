@@ -35,18 +35,18 @@ Use the returned model ID in `model`, `small_model`, and each agent frontmatter 
 The current agent files use this placeholder:
 
 ```text
-vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+vllm/Qwen/Qwen3.8-27B
 ```
 
-The primary local GadflyII/Qwen3-Coder-Next-NVFP4 model is expected to provide a **131072-token context window**. This should be preserved in the vLLM deployment because the orchestrator, coding agents, PR validator, and legacy-analysis flows rely on large-context local reasoning.
+The primary local Qwen/Qwen3.8-27B model is expected to provide a **131072-token context window**. This should be preserved in the vLLM deployment because the orchestrator, coding agents, PR validator, and legacy-analysis flows rely on large-context local reasoning.
 
 All local-model agent files should reference the same vLLM model:
 
 ```text
-vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+vllm/Qwen/Qwen3.8-27B
 ```
 
-This keeps the local setup simple for a single Vast.ai VM running vLLM/GadflyII/Qwen3-Coder-Next-NVFP4.
+This keeps the local setup simple for a single Vast.ai VM running vLLM/Qwen/Qwen3.8-27B.
 
 If your vLLM server exposes a different model name, update the agent files or configure an equivalent provider/model alias manually.
 
@@ -56,16 +56,16 @@ Not all agents use the local model. The intended routing is:
 
 | Agent/work type | Recommended model | Location |
 |---|---|---|
-| Orchestrator | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| Backend/frontend code generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| Code review / PR validation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| SAST security scanning | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Orchestrator | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| Backend/frontend code generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| Code review / PR validation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| SAST security scanning | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
 | UI/UX design | Gemini 3 Pro | Cloud |
 | Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
 | Codebase search / explorer | Claude Haiku 4.5 | Cloud |
 | Documentation / librarian | Claude Sonnet 4.6 | Cloud |
-| Logging strategy / observability | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Logging strategy / observability | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
 
 Current cloud-oriented agent defaults:
 
@@ -85,8 +85,8 @@ Create this manually in the repository root or merge it into your existing OpenC
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "vllm/GadflyII/Qwen3-Coder-Next-NVFP4",
-  "small_model": "vllm/GadflyII/Qwen3-Coder-Next-NVFP4",
+  "model": "vllm/Qwen/Qwen3.8-27B",
+  "small_model": "vllm/Qwen/Qwen3.8-27B",
   "default_agent": "omni-orchestrator",
   "provider": {
     "vllm": {

@@ -31,7 +31,7 @@ We categorize technology into **Initial Target**, **Extensible Targets**, and **
 | **Database** | PostgreSQL + PostGIS | SQL Server, MongoDB, MySQL | Extracts schema from existing DBs |
 | **Cache/Queue** | Redis + RabbitMQ | Azure Service Bus, Kafka | Documents existing queue topology |
 | **Orchestration** | OpenCode + Swarm plugin (Provider-agnostic) | | |
-| **Local LLM** | GadflyII/Qwen3-Coder-Next-NVFP4 (Handles all languages well) | | |
+| **Local LLM** | Qwen/Qwen3.8-27B (Handles all languages well) | | |
 | **Cloud LLMs** | GPT-5.5, Claude Sonnet 4.6 (for architecture/large refactors) | | |
 
 ---
@@ -169,10 +169,10 @@ We now have **25 specialized agents + 1 Orchestrator**. The new agents are marke
 ## 7. Local vs. Cloud LLM Allocation (Updated)
 | Agent Type | Agent Numbers | Model & Location |
 | :--- | :--- | :--- |
-| **Orchestrator** | (Master) | **Local** - GadflyII/Qwen3-Coder-Next-NVFP4 |
-| **All Coding/Review/Testing** | 9a, 9b, 10a, 10b, 10c, 11, 15, 17, 19, 21 | **Local** - GadflyII/Qwen3-Coder-Next-NVFP4 |
-| **Legacy Reverse Engineers** ✨ | 25a, 25b, 25c | **Local** - GadflyII/Qwen3-Coder-Next-NVFP4 (large context window is useful for reading huge legacy files selectively). |
-| **Security/SAST/DAST** | 12, 13, 14 | **Local** - Specialized Rule Engine + GadflyII/Qwen3-Coder-Next-NVFP4 |
+| **Orchestrator** | (Master) | **Local** - Qwen/Qwen3.8-27B |
+| **All Coding/Review/Testing** | 9a, 9b, 10a, 10b, 10c, 11, 15, 17, 19, 21 | **Local** - Qwen/Qwen3.8-27B |
+| **Legacy Reverse Engineers** ✨ | 25a, 25b, 25c | **Local** - Qwen/Qwen3.8-27B (large context window is useful for reading huge legacy files selectively). |
+| **Security/SAST/DAST** | 12, 13, 14 | **Local** - Specialized Rule Engine + Qwen/Qwen3.8-27B |
 | **UI/UX Design** | 8 | **Cloud** - Gemini 3 Pro (Multimodal) |
 | **Complex Architecture** | 5, 23 | **Cloud** - Claude Sonnet 4.6 / GPT-5.5 |
 | **External Search/Librarian** | 24 | **Cloud** - Claude Haiku 4.5 (Cheap & Fast) |
@@ -218,7 +218,7 @@ We will build this incrementally, adding polyglot support step-by-step.
 2. **Reverse Engineering Depth**: For the "As-Is" documents, do you want **only** high-level architecture (components and APIs), or do you want **detailed class/method-level** sequence diagrams for critical flows?
 3. **Polyglot Migration**: When the system creates a new feature, do you want it to **automatically** pick the stack based on the target repository (e.g., if the repo is C#, it generates C# code), or do you want the Orchestrator to **always ask you** which language to use for each new feature?
 4. **Testing Standards**: Should the Unit Test Generator (Agent 11) use the **same language** as the code it is testing, or should it always generate **Python scripts** (e.g., using `pytest` to test C# via HTTP calls)?
-5. **LLM Fallback for Legacy**: Legacy codebases often have massive single files. If the local GadflyII/Qwen3-Coder-Next-NVFP4 model with 131072-token context cannot handle the file size, should the Orchestrator automatically escalate the task to Cloud (Claude 200k) or split the file into chunks?
+5. **LLM Fallback for Legacy**: Legacy codebases often have massive single files. If the local Qwen/Qwen3.8-27B model with 131072-token context cannot handle the file size, should the Orchestrator automatically escalate the task to Cloud (Claude 200k) or split the file into chunks?
 
 ## 11. Where you can find more information?
 

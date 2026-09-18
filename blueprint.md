@@ -146,7 +146,7 @@ Important OpenCode schema facts:
 - Use `provider`, not `providers`.
 - Use `plugin`, not `plugins`.
 - Use `agent`, not `agents`.
-- Every model ID must include a provider prefix, such as `vllm/GadflyII/Qwen3-Coder-Next-NVFP4`.
+- Every model ID must include a provider prefix, such as `vllm/Qwen/Qwen3.8-27B`.
 - Unknown top-level fields are invalid.
 - Project-specific Omni metadata belongs in `.omni/orchestrator.config.json`.
 
@@ -155,8 +155,8 @@ Conceptual `opencode.json` skeleton:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "vllm/GadflyII/Qwen3-Coder-Next-NVFP4",
-  "small_model": "vllm/GadflyII/Qwen3-Coder-Next-NVFP4",
+  "model": "vllm/Qwen/Qwen3.8-27B",
+  "small_model": "vllm/Qwen/Qwen3.8-27B",
   "default_agent": "omni-orchestrator",
   "provider": {
     "vllm": {
@@ -223,7 +223,7 @@ The implementation AI must validate against `https://opencode.ai/config.json` be
 
 Omni uses a hybrid local/cloud model strategy. Local-first execution uses vLLM, but not every agent should use the local model.
 
-The primary local model is expected to be GadflyII/Qwen3-Coder-Next-NVFP4 or equivalent, exposed through an OpenAI-compatible vLLM endpoint, with a target context limit of **131072 tokens**. This large context window is a major design advantage for orchestration, code generation, code review, logging strategy, and privacy-sensitive repository work.
+The primary local model is expected to be Qwen/Qwen3.8-27B or equivalent, exposed through an OpenAI-compatible vLLM endpoint, with a target context limit of **131072 tokens**. This large context window is a major design advantage for orchestration, code generation, code review, logging strategy, and privacy-sensitive repository work.
 
 However, 131072 tokens is still a limit. Agents must not blindly load entire large repositories. They should use selective exploration, chunking, summaries, and dedicated codebase search/explorer behavior when needed.
 
@@ -237,16 +237,16 @@ Recommended allocation:
 
 | Agent Type | Recommended Model | Location | Reasoning |
 |---|---|---|---|
-| Orchestrator | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | High-frequency calls, low latency, privacy-sensitive. |
-| Backend/Frontend code generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Core coding work; code normally stays local. |
-| Code review / PR validation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Consistent with code generator and repository context. |
-| Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Lightweight code/test generation. |
-| SAST security scanning | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Prefer deterministic scanners; shared local LLM assists triage. |
+| Orchestrator | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | High-frequency calls, low latency, privacy-sensitive. |
+| Backend/Frontend code generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Core coding work; code normally stays local. |
+| Code review / PR validation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Consistent with code generator and repository context. |
+| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Lightweight code/test generation. |
+| SAST security scanning | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Prefer deterministic scanners; shared local LLM assists triage. |
 | UI/UX design | Gemini 3 Pro | Cloud | Multimodal and visual reasoning. |
 | Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud | One-off, high-complexity reasoning. |
 | Codebase search / explorer | Claude Haiku 4.5 | Cloud | Fast, low-cost classification and search. |
 | Documentation / librarian | Claude Sonnet 4.6 | Cloud | Documentation synthesis and live research when needed. |
-| Logging strategy / observability | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Close to implementation and code instrumentation. |
+| Logging strategy / observability | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Close to implementation and code instrumentation. |
 
 Cloud providers should be configured as placeholders for OpenAI, Anthropic, and Google. Agents decide whether escalation is appropriate, but must record why in the decision log for significant decisions. If a configured model is unavailable, the orchestrator must not silently substitute; it must ask the user.
 
@@ -264,7 +264,7 @@ Each agent file should include frontmatter similar to:
 ---
 description: Short description of when to use this agent.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: vllm/Qwen/Qwen3.8-27B
 permission:
   edit: ask
   bash: ask
@@ -279,7 +279,7 @@ The primary orchestrator should use:
 ---
 description: Primary Omni orchestrator for coordinating product creation workflows.
 mode: primary
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: vllm/Qwen/Qwen3.8-27B
 ---
 ```
 
@@ -616,7 +616,7 @@ Recommended initial skills:
    - Shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
 
 2. `model-allocation`
-   - How to route tasks between the shared local GadflyII/Qwen3-Coder-Next-NVFP4 131072-token context model and cloud specialist models.
+   - How to route tasks between the shared local Qwen/Qwen3.8-27B 131072-token context model and cloud specialist models.
 
 3. `adr-writing`
    - How to create and update ADRs.

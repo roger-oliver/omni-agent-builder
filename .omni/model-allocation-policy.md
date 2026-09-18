@@ -4,12 +4,9 @@ Omni uses a hybrid local/cloud model strategy.
 
 ## Local Model Context
 
-Two local models are served by vLLM:
+The primary local model is **Qwen/Qwen3.8-27B** served by vLLM with a target context window of **131072 tokens**.
 
-- **GadflyII/Qwen3-Coder-Next-NVFP4**: Target context window of **131072 tokens**. Used for orchestration, PR validation, unit test generation, and SAST assistance. Best for high-frequency, privacy-sensitive tasks requiring large context.
-- **Qwen/Qwen3.8-27B**: Lighter-weight model for implementation agents, QA, DevOps, observability, and GitHub operations. Faster inference for code generation and operational tasks.
-
-Both models should be used for high-frequency, private, code-heavy tasks. However, context windows are limits, not permission to load entire large repositories blindly. Agents must summarize, chunk, and inspect selectively when repositories exceed the available context.
+This model handles orchestration, PR validation, unit test generation, SAST assistance, implementation, QA, DevOps, observability, and GitHub operations. It should be used for high-frequency, private, code-heavy tasks. However, 131072 tokens is still a limit, not permission to load entire large repositories blindly. Agents must summarize, chunk, and inspect selectively when repositories exceed the available context.
 
 ## Cloud LLMs for Complex Tasks
 
@@ -23,7 +20,7 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 
 | Agent Type | Recommended Model | Location | Reasoning |
 |---|---|---|---|
-| Orchestrator | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | High-frequency calls, low latency, privacy-sensitive. |
+| Orchestrator | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | High-frequency calls, low latency, privacy-sensitive. |
 | Strategy and definition | opencode/claude-sonnet-4-6 | Cloud | Complex reasoning for business analysis and requirements. |
 | Design and architecture | opencode/claude-sonnet-4-6 | Cloud | Top-tier reasoning for schema and API design. |
 | Legacy analysis | opencode/claude-sonnet-4-6 | Cloud | Complex reasoning for legacy codebase analysis. |
@@ -33,9 +30,9 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 | Traceability governance | opencode/claude-haiku-4-5 | Cloud | Fast updates for RTM tracking. |
 | Documentation / librarian | opencode/claude-sonnet-4-6 | Cloud | Documentation synthesis and live research when needed. |
 | Backend/Frontend code generation | Qwen/Qwen3.8-27B | Local vLLM | Core coding work; code normally stays local. |
-| Code review / PR validation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Consistent with code generator and repository context. |
-| Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Uses the shared local coding model to simplify infrastructure. |
-| SAST security scanning | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context | Prefer deterministic scanners; shared local LLM assists triage. |
+| Code review / PR validation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Consistent with code generator and repository context. |
+| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Uses the shared local coding model to simplify infrastructure. |
+| SAST security scanning | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Prefer deterministic scanners; shared local LLM assists triage. |
 | QA and performance testing | Qwen/Qwen3.8-27B | Local vLLM | Test generation and validation. |
 | DevOps and release | Qwen/Qwen3.8-27B | Local vLLM | Pipeline and rollback configurations. |
 | Observability | Qwen/Qwen3.8-27B | Local vLLM | Close to implementation and code instrumentation. |
@@ -45,7 +42,7 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 
 ### Primary agent (local vLLM 131072-token context)
 
-- `omni-orchestrator`: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4`
+- `omni-orchestrator`: `vllm/Qwen/Qwen3.8-27B`
 
 ### Strategy and definition agents (cloud)
 
@@ -68,7 +65,7 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 - `backend-rust-engineer`: `vllm/Qwen/Qwen3.8-27B`
 - `backend-python-engineer`: `vllm/Qwen/Qwen3.8-27B`
 - `backend-csharp-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `unit-test-generator`: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4`
+- `unit-test-generator`: `vllm/Qwen/Qwen3.8-27B`
 
 ### Legacy analysis agents (cloud)
 
@@ -78,7 +75,7 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 
 ### Security agents (cloud)
 
-- `sast-scanner`: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4`
+- `sast-scanner`: `vllm/Qwen/Qwen3.8-27B`
 - `dast-tester`: `opencode/claude-sonnet-4-6`
 - `dependency-auditor`: `opencode/claude-sonnet-4-6`
 
@@ -108,6 +105,6 @@ Both models should be used for high-frequency, private, code-heavy tasks. Howeve
 
 - `codebase-explorer`: `opencode/claude-haiku-4-5`
 - `github-operator`: `vllm/Qwen/Qwen3.8-27B`
-- `pr-validator`: `vllm/GadflyII/Qwen3-Coder-Next-NVFP4`
+- `pr-validator`: `vllm/Qwen/Qwen3.8-27B`
 
 If a configured model is unavailable, the orchestrator must not silently substitute. It must report the missing model and ask the user whether to change the agent model or enable the required provider/model.

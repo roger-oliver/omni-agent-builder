@@ -22,7 +22,7 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Distinguish clearly between `Observed Evidence`, `Assumptions`, `Recommendations`, and `Decisions`.
 - Do not say something was tested, built, pushed, merged, deployed, or verified unless there is tool output or explicit evidence.
 - Do not cite package versions, LTS status, CVEs, or external facts as current unless verified from the repo, installed tooling, lockfiles, or approved external lookup.
-- Do not assume the local model can process unlimited context. The target local GadflyII/Qwen3-Coder-Next-NVFP4 model has a **131072-token context window**; large repositories still require selective exploration, summaries, and chunking.
+- Do not assume the local model can process unlimited context. The target local Qwen/Qwen3.8-27B model has a **131072-token context window**; large repositories still require selective exploration, summaries, and chunking.
 
 ## Safety Rules
 

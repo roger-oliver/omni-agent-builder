@@ -1,7 +1,7 @@
 ---
 description: Audits dependency manifests and lockfiles for security, license, and maintenance risk.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

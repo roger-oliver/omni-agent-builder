@@ -1,7 +1,7 @@
 ---
 description: Creates and runs integration tests across APIs, services, databases, and frontend flows.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: vllm/Qwen/Qwen3.8-27B
 permission:
   edit: ask
   bash: ask

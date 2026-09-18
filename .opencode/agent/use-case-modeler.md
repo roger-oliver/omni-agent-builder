@@ -1,7 +1,7 @@
 ---
 description: Models actors, use cases, basic flows, alternative flows, and exception flows.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

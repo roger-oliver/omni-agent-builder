@@ -70,10 +70,10 @@ Not all agents use the local model. The intended routing is:
 Current cloud-oriented agent defaults:
 
 ```text
-solution-architect      -> anthropic/claude-sonnet-4-6
-ui-ux-designer          -> google/gemini-3-pro
-codebase-explorer       -> anthropic/claude-haiku-4-5
-technical-writer        -> anthropic/claude-sonnet-4-6
+solution-architect      -> opencode/claude-sonnet-4-6
+ui-ux-designer          -> opencode/gemini-3-pro
+codebase-explorer       -> opencode/claude-haiku-4-5
+technical-writer        -> opencode/claude-sonnet-4-6
 ```
 
 If your OpenCode provider catalog uses different model IDs, update the corresponding agent frontmatter manually. Do not leave agent files pointing at unavailable models.

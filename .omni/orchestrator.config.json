@@ -24,6 +24,11 @@
           "ssh_url": "git@github.com:YOUR_ORG/my-new-product-backend.git",
           "local_path": "~/workspace/roger-projects/my-new-product-backend",
           "purpose": "backend source code"
+        },
+        "legacy": {
+          "ssh_url": "git@github.com:YOUR_ORG/my-new-product-legacy.git",
+          "local_path": "~/workspace/roger-projects/my-new-product-legacy",
+          "purpose": "legacy source code for as-is analysis"
         }
       },
       "branch_strategy": {

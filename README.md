@@ -16,7 +16,7 @@ Implemented in this repo:
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
 - Omni policies under `.omni/` (stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 36 OpenCode agent prompt files under `.opencode/agent/`
+- 34 OpenCode agent prompt files under `.opencode/agent/`
 - 7 reusable OpenCode skills under `.opencode/skills/`
 
 ## Design Principles
@@ -55,7 +55,7 @@ Implemented in this repo:
 │   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 36 agent prompt files
+    │   └── 34 agent prompt files
     └── skills/
         └── 7 reusable skill folders
 ```
@@ -208,8 +208,8 @@ Suggested OpenCode defaults:
 - Default agent: `omni-orchestrator`
 - Skills path: `.opencode/skills`
 - Local model provider: vLLM using OpenAI-compatible API
-- Primary local model: GadflyII/Qwen3-Coder-Next-NVFP4 with **131072-token context**
-- Shared local model for unit-test generation and SAST assistance: GadflyII/Qwen3-Coder-Next-NVFP4
+- Primary local model: GadflyII/Qwen3-Coder-Next-NVFP4 with **131072-token context** (orchestrator, PR validation, unit tests, SAST)
+- Secondary local model: Qwen/Qwen3.8-27B (implementation, QA, DevOps, observability, GitHub)
 - Cloud provider placeholders: OpenAI, Anthropic, Google
 
 Recommended model allocation:
@@ -217,14 +217,22 @@ Recommended model allocation:
 | Work type | Recommended model | Location |
 |---|---|---|
 | Orchestration | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
-| Backend/frontend code generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
 | PR validation/code review | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
 | Unit test generation | GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
 | SAST assistance | Rule engine + GadflyII/Qwen3-Coder-Next-NVFP4 | Local vLLM, 131072-token context |
+| Strategy and definition | Claude Sonnet 4.6 | Cloud |
+| Design and architecture | Claude Sonnet 4.6 | Cloud |
+| Legacy analysis | Claude Sonnet 4.6 | Cloud |
+| Security scanning (DAST, deps) | Claude Sonnet 4.6 | Cloud |
 | UI/UX design | Gemini 3 Pro | Cloud |
-| Complex architecture | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
 | Codebase exploration | Claude Haiku 4.5 | Cloud |
+| Traceability governance | Claude Haiku 4.5 | Cloud |
 | Documentation/librarian | Claude Sonnet 4.6 | Cloud |
+| Backend/frontend code generation | Qwen/Qwen3.8-27B | Local vLLM |
+| QA and performance testing | Qwen/Qwen3.8-27B | Local vLLM |
+| DevOps and release | Qwen/Qwen3.8-27B | Local vLLM |
+| Observability | Qwen/Qwen3.8-27B | Local vLLM |
+| GitHub operations | Qwen/Qwen3.8-27B | Local vLLM |
 
 Before finalizing the model config, query your vLLM endpoint and confirm the real model ID:
 

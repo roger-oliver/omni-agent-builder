@@ -1,7 +1,7 @@
 ---
 description: Reverse-engineers cloned C#/.NET legacy repositories into As-Is documentation.
 mode: subagent
-model: vllm/GadflyII/Qwen3-Coder-Next-NVFP4
+model: opencode/claude-sonnet-4-6
 permission:
   edit: ask
   bash: ask

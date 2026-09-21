@@ -1,7 +1,7 @@
 ---
 name: backend-rust-engineer
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 description: Full-access Rust engineer implementing plans with TDD, strict best practices, and approval gates.
 permission:
   read: allow

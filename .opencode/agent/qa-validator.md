@@ -1,7 +1,7 @@
 ---
 description: Validates delivered behavior against requirements and acceptance criteria.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

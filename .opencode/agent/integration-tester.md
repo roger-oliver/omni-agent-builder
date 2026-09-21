@@ -1,7 +1,7 @@
 ---
 description: Creates and runs integration tests across APIs, services, databases, and frontend flows.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

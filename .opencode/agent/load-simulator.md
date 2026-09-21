@@ -1,7 +1,7 @@
 ---
 description: Designs load and performance tests from non-functional requirements.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

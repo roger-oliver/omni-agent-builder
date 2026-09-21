@@ -146,7 +146,7 @@ Important OpenCode schema facts:
 - Use `provider`, not `providers`.
 - Use `plugin`, not `plugins`.
 - Use `agent`, not `agents`.
-- Every model ID must include a provider prefix, such as `vllm/Qwen/Qwen3.8-27B`.
+- Every model ID must include a provider prefix, such as `opencode/qwen3.8-flash`.
 - Unknown top-level fields are invalid.
 - Project-specific Omni metadata belongs in `.omni/orchestrator.config.json`.
 
@@ -155,8 +155,8 @@ Conceptual `opencode.json` skeleton:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "vllm/Qwen/Qwen3.8-27B",
-  "small_model": "vllm/Qwen/Qwen3.8-27B",
+  "model": "opencode/qwen3.8-flash",
+  "small_model": "opencode/qwen3.8-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
     "vllm": {
@@ -264,7 +264,7 @@ Each agent file should include frontmatter similar to:
 ---
 description: Short description of when to use this agent.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask
@@ -279,7 +279,7 @@ The primary orchestrator should use:
 ---
 description: Primary Omni orchestrator for coordinating product creation workflows.
 mode: primary
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 ---
 ```
 

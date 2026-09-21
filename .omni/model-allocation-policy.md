@@ -42,7 +42,7 @@ This model handles orchestration, PR validation, unit test generation, SAST assi
 
 ### Primary agent (local vLLM 131072-token context)
 
-- `omni-orchestrator`: `vllm/Qwen/Qwen3.8-27B`
+- `omni-orchestrator`: `opencode/qwen3.8-flash`
 
 ### Strategy and definition agents (cloud)
 
@@ -60,12 +60,12 @@ This model handles orchestration, PR validation, unit test generation, SAST assi
 
 ### Implementation agents (local vLLM)
 
-- `frontend-vue-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `frontend-react-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `backend-rust-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `backend-python-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `backend-csharp-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `unit-test-generator`: `vllm/Qwen/Qwen3.8-27B`
+- `frontend-vue-engineer`: `opencode/qwen3.8-flash`
+- `frontend-react-engineer`: `opencode/qwen3.8-flash`
+- `backend-rust-engineer`: `opencode/qwen3.8-flash`
+- `backend-python-engineer`: `opencode/qwen3.8-flash`
+- `backend-csharp-engineer`: `opencode/qwen3.8-flash`
+- `unit-test-generator`: `opencode/qwen3.8-flash`
 
 ### Legacy analysis agents (cloud)
 
@@ -75,26 +75,26 @@ This model handles orchestration, PR validation, unit test generation, SAST assi
 
 ### Security agents (cloud)
 
-- `sast-scanner`: `vllm/Qwen/Qwen3.8-27B`
+- `sast-scanner`: `opencode/qwen3.8-flash`
 - `dast-tester`: `opencode/claude-sonnet-4-6`
 - `dependency-auditor`: `opencode/claude-sonnet-4-6`
 
 ### QA and performance agents (local vLLM)
 
-- `integration-tester`: `vllm/Qwen/Qwen3.8-27B`
-- `load-simulator`: `vllm/Qwen/Qwen3.8-27B`
-- `qa-validator`: `vllm/Qwen/Qwen3.8-27B`
-- `uat-mimic`: `vllm/Qwen/Qwen3.8-27B`
+- `integration-tester`: `opencode/qwen3.8-flash`
+- `load-simulator`: `opencode/qwen3.8-flash`
+- `qa-validator`: `opencode/qwen3.8-flash`
+- `uat-mimic`: `opencode/qwen3.8-flash`
 
 ### DevOps and release agents (local vLLM)
 
-- `pipeline-engineer`: `vllm/Qwen/Qwen3.8-27B`
-- `rollback-manager`: `vllm/Qwen/Qwen3.8-27B`
+- `pipeline-engineer`: `opencode/qwen3.8-flash`
+- `rollback-manager`: `opencode/qwen3.8-flash`
 
 ### Observability agents (local vLLM)
 
-- `logging-strategist`: `vllm/Qwen/Qwen3.8-27B`
-- `alerting-monitor`: `vllm/Qwen/Qwen3.8-27B`
+- `logging-strategist`: `opencode/qwen3.8-flash`
+- `alerting-monitor`: `opencode/qwen3.8-flash`
 
 ### Governance and documentation agents (cloud)
 
@@ -104,7 +104,7 @@ This model handles orchestration, PR validation, unit test generation, SAST assi
 ### GitHub and PR agents
 
 - `codebase-explorer`: `opencode/claude-haiku-4-5`
-- `github-operator`: `vllm/Qwen/Qwen3.8-27B`
-- `pr-validator`: `vllm/Qwen/Qwen3.8-27B`
+- `github-operator`: `opencode/qwen3.8-flash`
+- `pr-validator`: `opencode/qwen3.8-flash`
 
 If a configured model is unavailable, the orchestrator must not silently substitute. It must report the missing model and ask the user whether to change the agent model or enable the required provider/model.

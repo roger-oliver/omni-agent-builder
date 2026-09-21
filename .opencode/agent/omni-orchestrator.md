@@ -1,7 +1,7 @@
 ---
 description: Primary Omni orchestrator for coordinating software-product creation workflows across registered repositories.
 mode: primary
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

@@ -1,7 +1,7 @@
 ---
 description: Validates PRs against requirements, ADRs, tests, security, dependencies, and traceability.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

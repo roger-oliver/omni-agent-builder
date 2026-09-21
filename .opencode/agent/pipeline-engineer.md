@@ -1,7 +1,7 @@
 ---
 description: Designs CI/CD pipelines and environment promotion workflows.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

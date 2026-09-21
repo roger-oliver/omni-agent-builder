@@ -1,7 +1,7 @@
 ---
 description: Implements Vue frontend work without hardcoding framework/package choices.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

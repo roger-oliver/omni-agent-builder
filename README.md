@@ -184,7 +184,7 @@ Reusable skills currently defined:
 `opencode.json` is included in this repo with the following defaults:
 
 - Default agent: `omni-orchestrator`
-- Primary model: `vllm/Qwen/Qwen3.8-27B` (131072-token context)
+- Primary model: `opencode/qwen3.8-flash` (131072-token context)
 - Skills path: `.opencode/skills`
 - Providers: vLLM (local), OpenAI, Anthropic, Google
 - Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch

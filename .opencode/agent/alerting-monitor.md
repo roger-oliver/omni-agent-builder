@@ -1,7 +1,7 @@
 ---
 description: Designs SLOs, SLIs, dashboards, monitors, and alert thresholds.
 mode: subagent
-model: vllm/Qwen/Qwen3.8-27B
+model: opencode/qwen3.8-flash
 permission:
   edit: ask
   bash: ask

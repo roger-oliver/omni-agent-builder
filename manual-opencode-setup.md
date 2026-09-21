@@ -35,7 +35,7 @@ Use the returned model ID in `model`, `small_model`, and each agent frontmatter 
 The current agent files use this placeholder:
 
 ```text
-vllm/Qwen/Qwen3.8-27B
+opencode/qwen3.8-flash
 ```
 
 The primary local Qwen/Qwen3.8-27B model is expected to provide a **131072-token context window**. This should be preserved in the vLLM deployment because the orchestrator, coding agents, PR validator, and legacy-analysis flows rely on large-context local reasoning.
@@ -43,7 +43,7 @@ The primary local Qwen/Qwen3.8-27B model is expected to provide a **131072-token
 All local-model agent files should reference the same vLLM model:
 
 ```text
-vllm/Qwen/Qwen3.8-27B
+opencode/qwen3.8-flash
 ```
 
 This keeps the local setup simple for a single Vast.ai VM running vLLM/Qwen/Qwen3.8-27B.
@@ -85,8 +85,8 @@ Create this manually in the repository root or merge it into your existing OpenC
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "vllm/Qwen/Qwen3.8-27B",
-  "small_model": "vllm/Qwen/Qwen3.8-27B",
+  "model": "opencode/qwen3.8-flash",
+  "small_model": "opencode/qwen3.8-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
     "vllm": {

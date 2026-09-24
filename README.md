@@ -18,6 +18,55 @@ Implemented in this repo:
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
 - 34 OpenCode agent prompt files under `.opencode/agent/`
 - 7 reusable OpenCode skills under `.opencode/skills/`
+- Global setup scripts under `scripts/` (installer + interactive project setup for bash and fish)
+
+## Installation
+
+Clone this repository and run the installer once per machine. It installs the
+project-setup scripts globally so `setup-omni` (bash) and `setup-omni.fish`
+work from any directory:
+
+```bash
+# Bash/Zsh
+git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
+cd ~/workspace/roger-projects/omni-agent-builder
+./scripts/install.sh
+
+# Fish
+git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
+cd ~/workspace/roger-projects/omni-agent-builder
+./scripts/install.fish
+```
+
+What the installer does:
+
+| Step | Target |
+|------|--------|
+| Copy setup scripts | `~/.config/opencode/setup-omni-project.{sh,fish}` |
+| Copy registry schema | `~/.config/opencode/instructions/repo-registry.schema.json` (only if missing) |
+| Create PATH links | `~/.local/bin/setup-omni` → bash script |
+| | `~/.local/bin/setup-omni.fish` → fish script |
+| Check PATH | warns if `~/.local/bin` is not on `PATH` |
+
+Then create any new project:
+
+```bash
+mkdir my-project && cd my-project
+setup-omni            # bash/zsh
+setup-omni.fish       # fish
+```
+
+The setup script asks for the project name, GitHub org (placeholder allowed),
+base clone path, and which repos to register, then generates the minimal Omni
+structure:
+
+```text
+my-project/
+├── opencode.json
+└── .omni/
+    ├── orchestrator.config.json
+    └── repo-registry.schema.json
+```
 
 ## Design Principles
 
@@ -42,6 +91,11 @@ Implemented in this repo:
 ├── initial-blueprint.md
 ├── all-history-conversation.md
 ├── manual-opencode-setup.md
+├── scripts/
+│   ├── install.sh                     # Global installer (bash)
+│   ├── install.fish                   # Global installer (fish)
+│   ├── setup-omni-project.sh          # Interactive project setup (bash)
+│   └── setup-omni-project.fish        # Interactive project setup (fish)
 ├── .omni/
 │   ├── orchestrator.config.json          # Active repo registry
 │   ├── orchestrator.config.example.json  # Example/template repo registry

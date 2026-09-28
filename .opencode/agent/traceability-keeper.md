@@ -1,7 +1,7 @@
 ---
 description: Maintains requirements traceability across documents, tests, PRs, ADRs, and releases.
 mode: subagent
-model: opencode/claude-haiku-4-5
+model: opencode/deepseek-v4-flash
 permission:
   edit: ask
   bash: ask

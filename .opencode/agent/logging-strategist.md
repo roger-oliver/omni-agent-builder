@@ -1,7 +1,7 @@
 ---
 description: Defines structured logging, tracing, correlation, and PII-safe observability conventions.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: mimo/mimo-v2.6-flash
 permission:
   edit: ask
   bash: ask

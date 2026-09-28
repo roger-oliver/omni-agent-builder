@@ -1,7 +1,7 @@
 ---
 description: Converts raw stakeholder input into formal business context documents.
 mode: subagent
-model: opencode/claude-sonnet-4-6
+model: mimo/mimo-v2.6-pro
 permission:
   edit: ask
   bash: ask

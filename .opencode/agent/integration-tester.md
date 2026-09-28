@@ -1,7 +1,7 @@
 ---
 description: Creates and runs integration tests across APIs, services, databases, and frontend flows.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: mimo/mimo-v2.6-flash
 permission:
   edit: ask
   bash: ask

@@ -1,7 +1,7 @@
 ---
 description: Performs GitHub API operations using GITHUB_TOKEN for registered repositories only.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: opencode/deepseek-v4-flash
 permission:
   edit: ask
   bash: ask

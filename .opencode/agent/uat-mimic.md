@@ -1,7 +1,7 @@
 ---
 description: Simulates business-user acceptance against delivered workflows.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: mimo/mimo-v2.6-flash
 permission:
   edit: ask
   bash: ask

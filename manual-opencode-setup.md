@@ -8,75 +8,63 @@ Set these outside the repo, for example in your shell profile, secret manager, o
 
 ```text
 GITHUB_TOKEN
-VLLM_BASE_URL
-VLLM_API_KEY
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-GOOGLE_GENERATIVE_AI_API_KEY
+XIAOMI_MIMO_API_KEY
+OPENCODE_ZEN_API_KEY
 ```
 
 Notes:
 
 - `GITHUB_TOKEN` is used for GitHub API operations.
 - SSH keys are still used for Git clone/fetch/push.
-- If vLLM does not require an API key, set `VLLM_API_KEY` to the placeholder value expected by your endpoint, such as `EMPTY`.
+- `XIAOMI_MIMO_API_KEY` authenticates the `mimo` provider (Xiaomi MiMo API, used for `mimo/mimo-v2.6-pro` and `mimo/mimo-v2.6-flash`).
+- `OPENCODE_ZEN_API_KEY` authenticates the `opencode` provider (OpenCode Zen, used for `opencode/deepseek-v4-flash` and fallback models).
 - Do not commit real secret values.
 
-## 2. Confirm your vLLM model ID
+## 2. Model IDs
 
-Before setting the default OpenCode model, query your vLLM endpoint:
+Omni uses Chinese cloud models only — no Anthropic models, no local runtimes (vLLM/Ollama/llama.cpp), and no Zen `-free` tiers (daily usage limits; data may be used for model improvement).
 
-```text
-GET {VLLM_BASE_URL}/models
-```
-
-Use the returned model ID in `model`, `small_model`, and each agent frontmatter if needed.
-
-The current agent files use this placeholder:
+The configured model IDs are:
 
 ```text
-opencode/qwen3.8-flash
+mimo/mimo-v2.6-pro        # T1 Thinkers  - $0.435/$0.87 per 1M tokens, 1M context
+mimo/mimo-v2.6-flash      # T2 Builders  - $0.14/$0.28 per 1M tokens, 1M context
+opencode/deepseek-v4-flash # T3 Operators - $0.14/$0.28 per 1M tokens, 1M context
 ```
 
-The primary local Qwen/Qwen3.8-27B model is expected to provide a **131072-token context window**. This should be preserved in the vLLM deployment because the orchestrator, coding agents, PR validator, and legacy-analysis flows rely on large-context local reasoning.
+Every model ID must include its provider prefix. Keep these IDs in sync across agent frontmatter, `.omni/model-allocation-policy.md`, and `opencode.json`. If a configured model is unavailable, stop and ask; never substitute silently.
 
-All local-model agent files should reference the same vLLM model:
+## 2.1 Model allocation
 
-```text
-opencode/qwen3.8-flash
-```
-
-This keeps the local setup simple for a single Vast.ai VM running vLLM/Qwen/Qwen3.8-27B.
-
-If your vLLM server exposes a different model name, update the agent files or configure an equivalent provider/model alias manually.
-
-## 2.1 Cloud model allocation
-
-Not all agents use the local model. The intended routing is:
-
-| Agent/work type | Recommended model | Location |
+| Agent/work type | Model | Tier |
 |---|---|---|
-| Orchestrator | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| Backend/frontend code generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| Code review / PR validation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| SAST security scanning | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| UI/UX design | Gemini 3 Pro | Cloud |
-| Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud |
-| Codebase search / explorer | Claude Haiku 4.5 | Cloud |
-| Documentation / librarian | Claude Sonnet 4.6 | Cloud |
-| Logging strategy / observability | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
+| Orchestration | `opencode/deepseek-v4-flash` | T3 |
+| Strategy and definition | `mimo/mimo-v2.6-pro` | T1 |
+| Design and architecture | `mimo/mimo-v2.6-pro` | T1 |
+| UI/UX design | `mimo/mimo-v2.6-pro` | T1 |
+| Legacy analysis | `mimo/mimo-v2.6-pro` | T1 |
+| Security analysis (SAST/DAST, dependencies) | `mimo/mimo-v2.6-pro` | T1 |
+| PR validation | `mimo/mimo-v2.6-pro` | T1 |
+| Backend/frontend code generation | `mimo/mimo-v2.6-flash` | T2 |
+| Unit test generation | `mimo/mimo-v2.6-flash` | T2 |
+| QA and performance testing | `mimo/mimo-v2.6-flash` | T2 |
+| DevOps and release | `mimo/mimo-v2.6-flash` | T2 |
+| Observability | `mimo/mimo-v2.6-flash` | T2 |
+| Documentation | `mimo/mimo-v2.6-flash` | T2 |
+| Codebase exploration | `opencode/deepseek-v4-flash` | T3 |
+| Traceability governance | `opencode/deepseek-v4-flash` | T3 |
+| GitHub operations | `opencode/deepseek-v4-flash` | T3 |
 
-Current cloud-oriented agent defaults:
+Current agent defaults:
 
 ```text
-solution-architect      -> opencode/claude-sonnet-4-6
-ui-ux-designer          -> opencode/gemini-3-pro
-codebase-explorer       -> opencode/claude-haiku-4-5
-technical-writer        -> opencode/claude-sonnet-4-6
+solution-architect      -> mimo/mimo-v2.6-pro
+ui-ux-designer          -> mimo/mimo-v2.6-pro
+codebase-explorer       -> opencode/deepseek-v4-flash
+technical-writer        -> mimo/mimo-v2.6-flash
 ```
 
-If your OpenCode provider catalog uses different model IDs, update the corresponding agent frontmatter manually. Do not leave agent files pointing at unavailable models.
+See `.omni/model-allocation-policy.md` for the complete per-agent roster, deprecated-model list, and the optional `opencode/kimi-k2.7-code` experiment note.
 
 ## 3. Suggested `opencode.json`
 
@@ -85,31 +73,35 @@ Create this manually in the repository root or merge it into your existing OpenC
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/qwen3.8-flash",
-  "small_model": "opencode/qwen3.8-flash",
+  "model": "mimo/mimo-v2.6-flash",
+  "small_model": "opencode/deepseek-v4-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
-    "vllm": {
-      "name": "vLLM Local",
-      "api": "openai",
+    "mimo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MiMo",
       "options": {
-        "baseURL": "{env:VLLM_BASE_URL}",
-        "apiKey": "{env:VLLM_API_KEY}"
+        "baseURL": "https://token-plan-ams.xiaomimimo.com/v1",
+        "apiKey": "{env:XIAOMI_MIMO_API_KEY}"
+      },
+      "models": {
+        "mimo-v2.6-pro": {
+          "name": "mimo-v2.6-pro",
+          "limit": { "context": 1048576, "output": 131072 },
+          "modalities": { "input": ["text", "image", "video", "audio"], "output": ["text"] }
+        },
+        "mimo-v2.6-flash": {
+          "name": "mimo-v2.6-flash",
+          "limit": { "context": 1048576, "output": 131072 },
+          "modalities": { "input": ["text", "image", "video", "audio"], "output": ["text"] }
+        }
       }
     },
-    "openai": {
+    "opencode": {
+      "name": "OpenCode Zen",
       "options": {
-        "apiKey": "{env:OPENAI_API_KEY}"
-      }
-    },
-    "anthropic": {
-      "options": {
-        "apiKey": "{env:ANTHROPIC_API_KEY}"
-      }
-    },
-    "google": {
-      "options": {
-        "apiKey": "{env:GOOGLE_GENERATIVE_AI_API_KEY}"
+        "baseURL": "https://opencode.ai/zen/v1",
+        "apiKey": "{env:OPENCODE_ZEN_API_KEY}"
       }
     }
   },

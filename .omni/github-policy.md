@@ -21,13 +21,14 @@
 - Comment on PRs.
 - Label PRs.
 - Approve passing PRs.
-- Merge passing PRs into `develop`.
+- Merge passing PRs into `develop` using **merge commits** (the only allowed merge method — never squash, never rebase-merge).
 
 ## Forbidden Operations
 
 - Create repositories.
 - Delete repositories.
 - Force-push.
+- Squash or rebase merges (merge commits only).
 - Change repository visibility.
 - Change branch protection.
 - Merge to `main` without explicit human approval.

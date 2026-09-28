@@ -1,7 +1,7 @@
 ---
 description: Prioritizes requirements and use cases using explicit ranking criteria.
 mode: subagent
-model: opencode/claude-sonnet-4-6
+model: mimo/mimo-v2.6-flash
 permission:
   edit: ask
   bash: ask

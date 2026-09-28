@@ -1,7 +1,7 @@
 ---
 description: Validates PRs against requirements, ADRs, tests, security, dependencies, and traceability.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: mimo/mimo-v2.6-pro
 permission:
   edit: ask
   bash: ask

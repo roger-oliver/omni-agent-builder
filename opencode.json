@@ -1,30 +1,46 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/qwen3.8-flash",
-  "small_model": "opencode/qwen3.8-flash",
+  "model": "mimo/mimo-v2.6-flash",
+  "small_model": "opencode/deepseek-v4-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
-    "vllm": {
-      "name": "vLLM Local",
-      "api": "openai",
+    "mimo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MiMo",
       "options": {
-        "baseURL": "{env:VLLM_BASE_URL}",
-        "apiKey": "{env:VLLM_API_KEY}"
+        "baseURL": "https://token-plan-ams.xiaomimimo.com/v1",
+        "apiKey": "{env:XIAOMI_MIMO_API_KEY}"
+      },
+      "models": {
+        "mimo-v2.6-pro": {
+          "name": "mimo-v2.6-pro",
+          "limit": {
+            "context": 1048576,
+            "output": 131072
+          },
+          "modalities": {
+            "input": ["text", "image", "video", "audio"],
+            "output": ["text"]
+          }
+        },
+        "mimo-v2.6-flash": {
+          "name": "mimo-v2.6-flash",
+          "limit": {
+            "context": 1048576,
+            "output": 131072
+          },
+          "modalities": {
+            "input": ["text", "image", "video", "audio"],
+            "output": ["text"]
+          }
+        }
       }
     },
-    "openai": {
+    "opencode": {
+      "name": "OpenCode Zen",
       "options": {
-        "apiKey": "{env:OPENAI_API_KEY}"
-      }
-    },
-    "anthropic": {
-      "options": {
-        "apiKey": "{env:ANTHROPIC_API_KEY}"
-      }
-    },
-    "google": {
-      "options": {
-        "apiKey": "{env:GOOGLE_GENERATIVE_AI_API_KEY}"
+        "baseURL": "https://opencode.ai/zen/v1",
+        "apiKey": "{env:OPENCODE_ZEN_API_KEY}"
       }
     }
   },

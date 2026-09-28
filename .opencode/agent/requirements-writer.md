@@ -1,7 +1,7 @@
 ---
 description: Produces software requirements specifications with acceptance criteria.
 mode: subagent
-model: opencode/claude-sonnet-4-6
+model: mimo/mimo-v2.6-pro
 permission:
   edit: ask
   bash: ask

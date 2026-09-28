@@ -118,7 +118,7 @@ my-project/
 
 ### `opencode.json`
 
-Root OpenCode configuration. Sets the default agent to `omni-orchestrator`, configures providers (vLLM, OpenAI, Anthropic, Google), loads skills from `.opencode/skills`, and defines security permissions (deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch).
+Root OpenCode configuration. Sets the default agent to `omni-orchestrator`, configures providers (Xiaomi MiMo, OpenCode Zen), loads skills from `.opencode/skills`, and defines security permissions (deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch).
 
 ### `blueprint.md`
 
@@ -126,7 +126,7 @@ The authoritative project blueprint. It describes the purpose, repository model,
 
 ### `manual-opencode-setup.md`
 
-Manual setup instructions for OpenCode. This includes suggested provider configuration for vLLM, OpenAI, Anthropic, and Google, plus permissions and skill loading guidance.
+Manual setup instructions for OpenCode. This includes provider configuration for Xiaomi MiMo and OpenCode Zen, permissions, and skill loading guidance.
 
 ### `.omni/orchestrator.config.example.json`
 
@@ -146,7 +146,7 @@ Shared non-negotiable behavior contract for all agents. It defines source-of-tru
 
 ### `.omni/model-allocation-policy.md`
 
-Hybrid local/cloud model routing guidance. It emphasizes the local Qwen/Qwen3.8-27B vLLM model's **131072-token context window** while assigning complex architecture, UI/UX, codebase exploration, and documentation/librarian work to appropriate cloud models.
+Three-tier model routing over Chinese cloud models only (no Anthropic, no local runtimes). `mimo/mimo-v2.6-pro` for deep-reasoning agents, `mimo/mimo-v2.6-flash` for code/test generation, `opencode/deepseek-v4-flash` for routing and lightweight operations — all with 1M-token context windows.
 
 ### `.opencode/agent/`
 
@@ -227,7 +227,7 @@ GitHub and PR agents:
 Reusable skills currently defined:
 
 - `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
-- `model-allocation`: local/cloud model routing, including the shared local Qwen/Qwen3.8-27B 131072-token context model and cloud specialist models.
+- `model-allocation`: three-tier Chinese cloud model routing (MiMo 2.6 Pro, MiMo 2.6 Flash, DeepSeek V4 Flash).
 - `adr-writing`: creating and updating Architecture Decision Records.
 - `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
 - `dependency-selection`: package/framework selection without lock-in.
@@ -239,59 +239,62 @@ Reusable skills currently defined:
 `opencode.json` is included in this repo with the following defaults:
 
 - Default agent: `omni-orchestrator`
-- Primary model: `opencode/qwen3.8-flash` (131072-token context)
+- Default model: `mimo/mimo-v2.6-flash`
+- Small model: `opencode/deepseek-v4-flash`
 - Skills path: `.opencode/skills`
-- Providers: vLLM (local), OpenAI, Anthropic, Google
+- Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
 - Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
 
 To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.
 
-Required or likely environment variables:
+Required environment variables:
 
 ```text
 GITHUB_TOKEN
-VLLM_BASE_URL
-VLLM_API_KEY
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-GOOGLE_GENERATIVE_AI_API_KEY
+XIAOMI_MIMO_API_KEY
+OPENCODE_ZEN_API_KEY
 ```
 
-Suggested OpenCode defaults:
+- `GITHUB_TOKEN` is used for GitHub API operations only; SSH keys handle Git clone/fetch/push.
+- `XIAOMI_MIMO_API_KEY` authenticates the `mimo` provider (Xiaomi MiMo API).
+- `OPENCODE_ZEN_API_KEY` authenticates the `opencode` provider (OpenCode Zen).
+- Do not commit real secret values.
 
-- Default agent: `omni-orchestrator`
-- Skills path: `.opencode/skills`
-- Local model provider: vLLM using OpenAI-compatible API
-- Primary local model: Qwen/Qwen3.8-27B with **131072-token context** (orchestration, implementation, QA, DevOps, observability, GitHub, PR validation, unit tests, SAST)
-- Cloud provider placeholders: OpenAI, Anthropic, Google
+### Model Allocation (3 tiers)
 
-Recommended model allocation:
+All Omni agents run on Chinese cloud models. Anthropic models and local runtimes (vLLM, Ollama, llama.cpp) are excluded by decision. Zen `-free` tiers are excluded because of daily usage limits and data-usage terms.
 
-| Work type | Recommended model | Location |
+| Tier | Model | $/1M in / out | Context | Used for |
+|---|---|---|---|---|
+| T1 Thinkers | `mimo/mimo-v2.6-pro` | $0.435 / $0.87 | 1M tokens | Strategy, requirements, architecture, schema/API design, UI/UX, legacy analysis, security analysis, PR validation |
+| T2 Builders | `mimo/mimo-v2.6-flash` | $0.14 / $0.28 | 1M tokens | Backend/frontend code generation, unit tests, QA, DevOps, observability, documentation, schema extraction |
+| T3 Operators | `opencode/deepseek-v4-flash` | $0.14 / $0.28 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub API operations |
+
+| Work type | Model | Tier |
 |---|---|---|
-| Orchestration | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| PR validation/code review | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| SAST assistance | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context |
-| Strategy and definition | Claude Sonnet 4.6 | Cloud |
-| Design and architecture | Claude Sonnet 4.6 | Cloud |
-| Legacy analysis | Claude Sonnet 4.6 | Cloud |
-| Security scanning (DAST, deps) | Claude Sonnet 4.6 | Cloud |
-| UI/UX design | Gemini 3 Pro | Cloud |
-| Codebase exploration | Claude Haiku 4.5 | Cloud |
-| Traceability governance | Claude Haiku 4.5 | Cloud |
-| Documentation/librarian | Claude Sonnet 4.6 | Cloud |
-| Backend/frontend code generation | Qwen/Qwen3.8-27B | Local vLLM |
-| QA and performance testing | Qwen/Qwen3.8-27B | Local vLLM |
-| DevOps and release | Qwen/Qwen3.8-27B | Local vLLM |
-| Observability | Qwen/Qwen3.8-27B | Local vLLM |
-| GitHub operations | Qwen/Qwen3.8-27B | Local vLLM |
+| Orchestration | `opencode/deepseek-v4-flash` | T3 |
+| Strategy and definition | `mimo/mimo-v2.6-pro` | T1 |
+| Design and architecture | `mimo/mimo-v2.6-pro` | T1 |
+| UI/UX design | `mimo/mimo-v2.6-pro` | T1 |
+| Legacy analysis | `mimo/mimo-v2.6-pro` | T1 |
+| Security analysis (SAST/DAST, dependencies) | `mimo/mimo-v2.6-pro` | T1 |
+| PR validation | `mimo/mimo-v2.6-pro` | T1 |
+| Backend/frontend code generation | `mimo/mimo-v2.6-flash` | T2 |
+| Unit test generation | `mimo/mimo-v2.6-flash` | T2 |
+| QA and performance testing | `mimo/mimo-v2.6-flash` | T2 |
+| DevOps and release | `mimo/mimo-v2.6-flash` | T2 |
+| Observability | `mimo/mimo-v2.6-flash` | T2 |
+| Documentation | `mimo/mimo-v2.6-flash` | T2 |
+| Codebase exploration | `opencode/deepseek-v4-flash` | T3 |
+| Traceability governance | `opencode/deepseek-v4-flash` | T3 |
+| GitHub operations | `opencode/deepseek-v4-flash` | T3 |
 
-Before finalizing the model config, query your vLLM endpoint and confirm the real model ID:
+Rules:
 
-```text
-GET {VLLM_BASE_URL}/models
-```
+- Every model ID must include its provider prefix (`mimo/...` or `opencode/...`).
+- If a configured model is unavailable, stop and ask; never substitute silently.
+- Keep model IDs in sync across agent frontmatter, `.omni/model-allocation-policy.md`, `opencode.json`, and `manual-opencode-setup.md`.
+- A 1M-token context is a limit, not permission to load entire repositories blindly.
 
 After creating or changing OpenCode config, agents, skills, or plugins, restart OpenCode. OpenCode loads these files at startup.
 

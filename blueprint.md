@@ -107,11 +107,8 @@ Required or likely environment variables:
 
 ```text
 GITHUB_TOKEN
-OPENAI_API_KEY
-ANTHROPIC_API_KEY
-GOOGLE_GENERATIVE_AI_API_KEY
-VLLM_BASE_URL
-VLLM_API_KEY
+XIAOMI_MIMO_API_KEY
+OPENCODE_ZEN_API_KEY
 ```
 
 Optional environment variables for future integrations:
@@ -146,7 +143,7 @@ Important OpenCode schema facts:
 - Use `provider`, not `providers`.
 - Use `plugin`, not `plugins`.
 - Use `agent`, not `agents`.
-- Every model ID must include a provider prefix, such as `opencode/qwen3.8-flash`.
+- Every model ID must include a provider prefix, such as `mimo/mimo-v2.6-flash`.
 - Unknown top-level fields are invalid.
 - Project-specific Omni metadata belongs in `.omni/orchestrator.config.json`.
 
@@ -155,31 +152,35 @@ Conceptual `opencode.json` skeleton:
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/qwen3.8-flash",
-  "small_model": "opencode/qwen3.8-flash",
+  "model": "mimo/mimo-v2.6-flash",
+  "small_model": "opencode/deepseek-v4-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
-    "vllm": {
-      "name": "vLLM Local",
-      "api": "openai",
+    "mimo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MiMo",
       "options": {
-        "baseURL": "{env:VLLM_BASE_URL}",
-        "apiKey": "{env:VLLM_API_KEY}"
+        "baseURL": "https://token-plan-ams.xiaomimimo.com/v1",
+        "apiKey": "{env:XIAOMI_MIMO_API_KEY}"
+      },
+      "models": {
+        "mimo-v2.6-pro": {
+          "name": "mimo-v2.6-pro",
+          "limit": { "context": 1048576, "output": 131072 },
+          "modalities": { "input": ["text", "image", "video", "audio"], "output": ["text"] }
+        },
+        "mimo-v2.6-flash": {
+          "name": "mimo-v2.6-flash",
+          "limit": { "context": 1048576, "output": 131072 },
+          "modalities": { "input": ["text", "image", "video", "audio"], "output": ["text"] }
+        }
       }
     },
-    "openai": {
+    "opencode": {
+      "name": "OpenCode Zen",
       "options": {
-        "apiKey": "{env:OPENAI_API_KEY}"
-      }
-    },
-    "anthropic": {
-      "options": {
-        "apiKey": "{env:ANTHROPIC_API_KEY}"
-      }
-    },
-    "google": {
-      "options": {
-        "apiKey": "{env:GOOGLE_GENERATIVE_AI_API_KEY}"
+        "baseURL": "https://opencode.ai/zen/v1",
+        "apiKey": "{env:OPENCODE_ZEN_API_KEY}"
       }
     }
   },
@@ -219,36 +220,36 @@ Conceptual `opencode.json` skeleton:
 
 The implementation AI must validate against `https://opencode.ai/config.json` before writing final config.
 
-## 6. Local and Cloud Model Strategy
+## 6. Cloud Model Strategy
 
-Omni uses a hybrid local/cloud model strategy. Local-first execution uses vLLM, but not every agent should use the local model.
+Omni uses Chinese cloud models only — no Anthropic models, no local runtimes (vLLM/Ollama/llama.cpp), and no Zen `-free` tiers (daily usage limits; data may be used for model improvement). Two providers are configured: Xiaomi MiMo (`mimo/...`) and OpenCode Zen (`opencode/...`).
 
-The primary local model is expected to be Qwen/Qwen3.8-27B or equivalent, exposed through an OpenAI-compatible vLLM endpoint, with a target context limit of **131072 tokens**. This large context window is a major design advantage for orchestration, code generation, code review, logging strategy, and privacy-sensitive repository work.
+The model tiers are:
 
-However, 131072 tokens is still a limit. Agents must not blindly load entire large repositories. They should use selective exploration, chunking, summaries, and dedicated codebase search/explorer behavior when needed.
+| Tier | Model | $/1M in / out | Context | Role |
+|---|---|---|---|---|
+| T1 Thinkers | `mimo/mimo-v2.6-pro` | $0.435 / $0.87 | 1M tokens | Deep reasoning: architecture, schema/API design, strategy, requirements, legacy analysis, security analysis, UI/UX, PR validation |
+| T2 Builders | `mimo/mimo-v2.6-flash` | $0.14 / $0.28 | 1M tokens | Code/test/config generation, QA, DevOps, observability, documentation |
+| T3 Operators | `opencode/deepseek-v4-flash` | $0.14 / $0.28 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub operations |
 
-Before final config is created, verify the real model name exposed by vLLM:
-
-```text
-GET {VLLM_BASE_URL}/models
-```
+A 1M-token context window is still a limit. Agents must not blindly load entire large repositories. They should use selective exploration, chunking, summaries, and dedicated codebase search/explorer behavior when needed.
 
 Recommended allocation:
 
-| Agent Type | Recommended Model | Location | Reasoning |
+| Agent Type | Model | Tier | Reasoning |
 |---|---|---|---|
-| Orchestrator | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | High-frequency calls, low latency, privacy-sensitive. |
-| Backend/Frontend code generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Core coding work; code normally stays local. |
-| Code review / PR validation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Consistent with code generator and repository context. |
-| Unit test generation | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Lightweight code/test generation. |
-| SAST security scanning | Rule engine + Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Prefer deterministic scanners; shared local LLM assists triage. |
-| UI/UX design | Gemini 3 Pro | Cloud | Multimodal and visual reasoning. |
-| Complex architecture decisions | GPT-5.5 or Claude Sonnet 4.6 | Cloud | One-off, high-complexity reasoning. |
-| Codebase search / explorer | Claude Haiku 4.5 | Cloud | Fast, low-cost classification and search. |
-| Documentation / librarian | Claude Sonnet 4.6 | Cloud | Documentation synthesis and live research when needed. |
-| Logging strategy / observability | Qwen/Qwen3.8-27B | Local vLLM, 131072-token context | Close to implementation and code instrumentation. |
+| Orchestration | `opencode/deepseek-v4-flash` | T3 | High-frequency calls; provider diversity if the Xiaomi API is down |
+| Backend/Frontend code generation | `mimo/mimo-v2.6-flash` | T2 | High-volume code output with agentic tool use |
+| Code review / PR validation | `mimo/mimo-v2.6-pro` | T1 | Consequential quality-gate judgment |
+| Unit test generation | `mimo/mimo-v2.6-flash` | T2 | Same builder profile as implementation |
+| SAST security scanning | Rule engine + `mimo/mimo-v2.6-pro` | T1 | Prefer deterministic scanners; LLM assists triage |
+| UI/UX design | `mimo/mimo-v2.6-pro` | T1 | Omnimo­dal input (text/image/video/audio) |
+| Complex architecture decisions | `mimo/mimo-v2.6-pro` | T1 | Top-tier open-weight reasoning score |
+| Codebase search / explorer | `opencode/deepseek-v4-flash` | T3 | Fast, low-cost classification and search |
+| Documentation / librarian | `mimo/mimo-v2.6-flash` | T2 | Documentation synthesis |
+| Logging strategy / observability | `mimo/mimo-v2.6-flash` | T2 | Close to implementation and code instrumentation |
 
-Cloud providers should be configured as placeholders for OpenAI, Anthropic, and Google. Agents decide whether escalation is appropriate, but must record why in the decision log for significant decisions. If a configured model is unavailable, the orchestrator must not silently substitute; it must ask the user.
+If a configured model is unavailable, the orchestrator must not silently substitute; it must ask the user. See `.omni/model-allocation-policy.md` for the complete per-agent roster and the do-not-use list (deprecated Zen models: `gemini-3-pro`, `kimi-k2.5`, `glm-5`, `minimax-m2.5`).
 
 ## 7. Agent File Strategy
 
@@ -264,7 +265,7 @@ Each agent file should include frontmatter similar to:
 ---
 description: Short description of when to use this agent.
 mode: subagent
-model: opencode/qwen3.8-flash
+model: mimo/mimo-v2.6-flash
 permission:
   edit: ask
   bash: ask
@@ -279,7 +280,7 @@ The primary orchestrator should use:
 ---
 description: Primary Omni orchestrator for coordinating product creation workflows.
 mode: primary
-model: opencode/qwen3.8-flash
+model: opencode/deepseek-v4-flash
 ---
 ```
 
@@ -616,7 +617,7 @@ Recommended initial skills:
    - Shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
 
 2. `model-allocation`
-   - How to route tasks between the shared local Qwen/Qwen3.8-27B 131072-token context model and cloud specialist models.
+   - How to route tasks across the three Chinese cloud model tiers (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4-flash`).
 
 3. `adr-writing`
    - How to create and update ADRs.
@@ -651,8 +652,7 @@ OpenCode commands can be added later in `opencode.json`. Recommended commands:
 - Create this blueprint.
 - Create `.omni` policy documents.
 - Create valid `opencode.json`.
-- Confirm vLLM model ID.
-- Confirm required environment variables.
+- Confirm required environment variables (`XIAOMI_MIMO_API_KEY`, `OPENCODE_ZEN_API_KEY`).
 
 ### Phase 1: Agent Skeletons
 

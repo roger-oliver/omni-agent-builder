@@ -435,8 +435,25 @@ No `backend-node-typescript-engineer` is planned. TypeScript/JavaScript are fron
 34. `pr-validator`
     - Reviews PRs against requirements, ADRs, acceptance criteria, tests, lint/build status, security, dependencies, and traceability.
     - Comments failures on the PR.
-    - Sends failed PRs back to the coding agent.
-    - Approves and allows auto-merge to `develop` when all checks pass.
+    - Sends failed PRs back to the coding agent (max 3 loops, then human escalation).
+    - Approves and allows auto-merge to `develop` (merge commits) when all checks pass.
+
+### Extended Quality, Release, and Compliance (added 2026-09-28)
+
+35. `e2e-test-engineer`
+    - Browser-level E2E tests for critical user journeys using the repo's chosen tooling (Playwright-class).
+
+36. `release-manager`
+    - Owns `omni-release`: SemVer versioning, `release/*` branches, changelog aggregation, human-approval handoff for `main`.
+
+37. `data-migration-engineer`
+    - Implements expand/contract database migrations, batched backfills, and rollback steps.
+
+38. `accessibility-auditor`
+    - Audits delivered UI against WCAG 2.2 AA with evidence-based findings.
+
+39. `privacy-compliance-reviewer`
+    - GDPR-focused privacy review: processing inventory, lawful basis, retention, minimization, data-subject rights hooks.
 
 ## 9. GitHub Workflow
 
@@ -611,28 +628,32 @@ Reusable skills should live under:
 .opencode/skills/<skill-name>/SKILL.md
 ```
 
-Recommended initial skills:
+Recommended skills (19 as of 2026-09-28):
 
-1. `agent-operating-contract`
-   - Shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
+Process and governance:
 
-2. `model-allocation`
-   - How to route tasks across the three Chinese cloud model tiers (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4-flash`).
+1. `agent-operating-contract` — shared anti-hallucination, safety, response-shape, repository-interaction, and artifact-quality rules.
+2. `sdlc-handoffs` — phase gates G1–G12, handoff packet fields, artifact paths.
+3. `id-traceability` — BC/UC/REQ/NFR/AC/TC/DEF/ADR ID scheme and RTM schema.
+4. `stack-selection` — the always-ask stack rule and decision matrix.
+5. `adr-writing` — ADR creation, status transitions, failed-approach ADRs.
+6. `github-workflow` — registered repo, branch/PR conventions, merge-commit rules, `GITHUB_TOKEN` workflow.
+7. `dependency-selection` — package/framework selection with SPDX license posture and audit tools.
+8. `docs-structure` — documentation information architecture and release-notes template.
+9. `legacy-analysis` — how to produce As-Is documentation.
+10. `model-allocation` — three Chinese cloud model tiers (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4-flash`).
 
-3. `adr-writing`
-   - How to create and update ADRs.
+Craft and quality:
 
-4. `github-workflow`
-   - How to work with registered repos, branches, PRs, and `GITHUB_TOKEN`.
-
-5. `dependency-selection`
-   - How to choose packages without framework lock-in.
-
-6. `legacy-analysis`
-   - How to produce As-Is documentation.
-
-7. `pr-validation`
-   - How to validate PRs against requirements and acceptance criteria.
+11. `requirements-quality` — Gherkin acceptance criteria, NFR taxonomy, testability lint.
+12. `api-design` — REST conventions, error envelope, pagination, idempotency, versioning.
+13. `data-modeling` — naming rules, expand/contract migrations, data lifecycle.
+14. `test-strategy` — test pyramid, traceability tags, synthetic-only test data.
+15. `security-review` — severity taxonomy, findings table, OWASP mapping, secret patterns.
+16. `observability-standards` — log schema, OpenTelemetry, SLI/SLO, no-alert-without-runbook.
+17. `ui-ux-standards` — WCAG 2.2 AA checklist, W3C design tokens, state matrix.
+18. `cicd-release` — required pipeline jobs, promotion gates, SemVer, rollback matrix.
+19. `pr-validation` — 10-row PR validation checklist and the bounded fix loop.
 
 ## 15. Commands to Consider
 

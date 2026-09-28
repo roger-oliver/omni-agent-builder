@@ -66,7 +66,7 @@
     },
     "omni-release": {
       "description": "Prepare release branch and release notes",
-      "template": "Ask the user for the release version and scope. Create a release branch from develop, update version numbers, generate release notes from the decision log and PR history, and prepare the branch for human approval before merging to main."
+      "template": "Delegate to release-manager. It decides the SemVer version from merged changes, creates the release branch from develop, aggregates release notes from the decision log and PR history, and hands off for human approval before merging to main. Merge method is merge commits; never squash or force-push."
     },
     "omni-update-traceability": {
       "description": "Refresh the Requirements Traceability Matrix",

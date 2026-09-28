@@ -55,6 +55,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 - `dast-tester`
 - `dependency-auditor`
 - `pr-validator`
+- `privacy-compliance-reviewer`
 
 ### T2 Builders — `mimo/mimo-v2.6-flash`
 
@@ -67,11 +68,15 @@ A 1M-token context window is still a limit, not permission to load entire large 
 - `unit-test-generator`
 - `schema-extractor`
 - `integration-tester`
+- `e2e-test-engineer`
 - `load-simulator`
 - `qa-validator`
 - `uat-mimic`
+- `accessibility-auditor`
 - `pipeline-engineer`
 - `rollback-manager`
+- `release-manager`
+- `data-migration-engineer`
 - `logging-strategist`
 - `alerting-monitor`
 - `technical-writer`

@@ -16,9 +16,10 @@ Implemented in this repo:
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
 - Omni policies under `.omni/` (stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 34 OpenCode agent prompt files under `.opencode/agent/`
-- 7 reusable OpenCode skills under `.opencode/skills/`
+- 39 OpenCode agent prompt files under `.opencode/agent/`
+- 19 reusable OpenCode skills under `.opencode/skills/`
 - Global setup scripts under `scripts/` (installer + interactive project setup for bash and fish)
+- `docs/vocabulary.md` (shared jargon glossary) and `docs/agent-skill-audit-2026-09-28.md` (revision tracking)
 
 ## Installation
 
@@ -96,6 +97,9 @@ my-project/
 │   ├── install.fish                   # Global installer (fish)
 │   ├── setup-omni-project.sh          # Interactive project setup (bash)
 │   └── setup-omni-project.fish        # Interactive project setup (fish)
+├── docs/
+│   ├── vocabulary.md                  # Shared jargon glossary
+│   └── agent-skill-audit-2026-09-28.md  # Agent/skill revision tracking
 ├── .omni/
 │   ├── orchestrator.config.json          # Active repo registry
 │   ├── orchestrator.config.example.json  # Example/template repo registry
@@ -109,9 +113,9 @@ my-project/
 │   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 34 agent prompt files
+    │   └── 39 agent prompt files
     └── skills/
-        └── 7 reusable skill folders
+        └── 19 reusable skill folders
 ```
 
 ## Important Files
@@ -183,7 +187,9 @@ Implementation agents:
 - `backend-rust-engineer`
 - `backend-python-engineer`
 - `backend-csharp-engineer`
+- `data-migration-engineer`
 - `unit-test-generator`
+- `e2e-test-engineer`
 
 Legacy reverse-engineering agents:
 
@@ -191,11 +197,12 @@ Legacy reverse-engineering agents:
 - `legacy-csharp-analyst`
 - `schema-extractor`
 
-Security agents:
+Security and compliance agents:
 
 - `sast-scanner`
 - `dast-tester`
 - `dependency-auditor`
+- `privacy-compliance-reviewer`
 
 QA and performance agents:
 
@@ -203,11 +210,13 @@ QA and performance agents:
 - `load-simulator`
 - `qa-validator`
 - `uat-mimic`
+- `accessibility-auditor`
 
 DevOps, release, and observability agents:
 
 - `pipeline-engineer`
 - `rollback-manager`
+- `release-manager`
 - `logging-strategist`
 - `alerting-monitor`
 
@@ -224,15 +233,32 @@ GitHub and PR agents:
 
 ## Skills
 
-Reusable skills currently defined:
+Reusable skills currently defined (19):
+
+Process and governance:
 
 - `agent-operating-contract`: shared anti-hallucination, safety, response-shape, and artifact-quality rules.
-- `model-allocation`: three-tier Chinese cloud model routing (MiMo 2.6 Pro, MiMo 2.6 Flash, DeepSeek V4 Flash).
-- `adr-writing`: creating and updating Architecture Decision Records.
-- `github-workflow`: registered repo, branch, PR, and `GITHUB_TOKEN` workflow.
-- `dependency-selection`: package/framework selection without lock-in.
+- `sdlc-handoffs`: phase gates G1–G12, handoff packet fields, artifact paths.
+- `id-traceability`: `BC/UC/REQ/NFR/AC/TC/DEF/ADR` ID scheme and RTM schema.
+- `stack-selection`: the always-ask stack rule and decision matrix.
+- `adr-writing`: ADR creation, status transitions, failed-approach ADRs.
+- `github-workflow`: registered repo, branch/PR conventions, merge-commit rules, `GITHUB_TOKEN` workflow.
+- `dependency-selection`: package/framework selection with SPDX license posture and audit tools.
+- `docs-structure`: documentation information architecture and release-notes template.
 - `legacy-analysis`: read-only As-Is documentation for legacy repos.
-- `pr-validation`: PR validation against requirements, ADRs, tests, security, and traceability.
+
+Craft and quality:
+
+- `model-allocation`: three-tier Chinese cloud model routing (MiMo 2.6 Pro, MiMo 2.6 Flash, DeepSeek V4 Flash).
+- `requirements-quality`: Gherkin acceptance criteria, NFR taxonomy, testability lint.
+- `api-design`: REST conventions, error envelope, pagination, idempotency, versioning.
+- `data-modeling`: naming rules, expand/contract migrations, data lifecycle.
+- `test-strategy`: test pyramid, traceability tags, synthetic-only test data.
+- `security-review`: severity taxonomy, findings table, OWASP mapping, secret patterns.
+- `observability-standards`: log schema, OpenTelemetry, SLI/SLO, no-alert-without-runbook.
+- `ui-ux-standards`: WCAG 2.2 AA checklist, W3C design tokens, state matrix.
+- `cicd-release`: required pipeline jobs, promotion gates, SemVer, rollback matrix.
+- `pr-validation`: 10-row PR validation checklist and the bounded fix loop.
 
 ## OpenCode Configuration
 
@@ -330,13 +356,14 @@ Allowed after repo registration:
 - Commit and push feature branches.
 - Open PRs to `develop`.
 - Comment, label, approve, and validate PRs.
-- Auto-merge passing PRs to `develop`.
+- Auto-merge passing PRs to `develop` using **merge commits** (the only allowed merge method — no squash, no rebase-merge).
 
 Forbidden unless policy changes:
 
 - Create repositories.
 - Delete repositories.
 - Force-push.
+- Squash or rebase merges.
 - Change repository visibility.
 - Change branch protection.
 - Merge to `main` without human approval.

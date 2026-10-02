@@ -160,13 +160,36 @@ precedence (hierarchy of truth #1: current user request). The script is
 idempotent and re-checkable (`--check`). Repository visibility change remains
 a human action per policy.
 
-**Blocked on user action**: the active `GITHUB_TOKEN` (fine-grained PAT) does
-not include `roger-oliver/omni-agent-builder` in its repository scope (repo is
-private; API returns 404 while SSH access works). To apply protection:
+**Applied 2026-09-28 (session, after commit normalization)**: repo settings
+applied via the owner's `gh` keyring session (admin on repo): merge-commits
+only, squash/rebase disabled, auto-merge off, delete-branch-on-merge on, wiki
+and projects disabled.
 
-1. GitHub → Settings → Developer settings → Fine-grained tokens → edit token →
-   Repository access → add `roger-oliver/omni-agent-builder`; grant
-   **Administration: Read and write**.
-2. Run `./scripts/apply-repo-security.sh`.
-3. Verify with `./scripts/apply-repo-security.sh --check`.
-4. Make the repo public yourself (Settings → Danger Zone → Change visibility).
+**Remaining blocker**: branch protection on private repos requires GitHub Pro
+(API 403: "Upgrade to GitHub Pro or make this repository public"). Sequence:
+
+1. Make the repo public (Settings → General → Danger Zone → Change visibility) — human action.
+2. Re-run `./scripts/apply-repo-security.sh` → branch protection + private
+   vulnerability reporting will now succeed (free for public repos).
+3. Verify: `./scripts/apply-repo-security.sh --check`.
+
+## 10. Commit attribution normalization (2026-09-28)
+
+User report: commits appeared under the wrong account. Evidence showed the
+opposite direction: today's commits (`rogerio@versatility.com.br`) were already
+attributed to `roger-oliver`; the older 12 commits (`roger@v9y.nl`) were
+**unlinked** (no GitHub profile). SSH identity on this machine confirmed as
+`roger-oliver` (`ssh -T git@github.com`).
+
+Action: `git filter-branch --env-filter` mapped `roger@v9y.nl` →
+`rogerio@versatility.com.br` (author + committer) across all 18 commits on
+develop + main; backups (`refs/original`) deleted, reflog expired, objects
+pruned; content verified unchanged (identical tree hash); force-pushed with
+`--force-with-lease`.
+
+Post-rewrite verification (GitHub API): **all 19 remote commits on develop +
+main now show `author.login = roger-oliver`**. No `roger@v9y.nl` remains in
+emails, commit messages, or tracked files.
+
+Note: the machine's GLOBAL git config still uses `roger@v9y.nl` (other repos);
+this repo's local config is correct.

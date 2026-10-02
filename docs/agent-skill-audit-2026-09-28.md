@@ -131,3 +131,42 @@ Tracking document for the full agent/skill revision pass. All suggestions raised
 | Docs | — | +2 (`docs/`) |
 
 Model tiers after the change: **T1** `mimo/mimo-v2.6-pro` × 14 (13 + `privacy-compliance-reviewer`), **T2** `mimo/mimo-v2.6-flash` × 21 (17 + `e2e-test-engineer`, `release-manager`, `data-migration-engineer`, `accessibility-auditor`), **T3** `opencode/deepseek-v4-flash` × 4 (unchanged: `omni-orchestrator`, `codebase-explorer`, `traceability-keeper`, `github-operator`). See `.omni/model-allocation-policy.md` for the authoritative roster.
+
+---
+
+## 9. Repository security hardening (added 2026-09-28, same session)
+
+User request: make the repo public safely — no one except the owner may push or change anything; contributions accepted only via PR.
+
+| Item | Artifact | Status |
+|---|---|---|
+| Vulnerability intake (no public issues) | `SECURITY.md` + private vulnerability reporting | ✅ File created; PVR enable attempted by script |
+| PR-only contributions | `scripts/apply-repo-security.sh` → branch protection on `main` + `develop` | ✅ Script ready; **pending run** (PAT scope, see below) |
+| Owner direct-push exception | `enforce_admins: false` in protection | ✅ Encoded in script |
+| Review gates | 1 approving review + CODEOWNERS + `omni-validate` required check | ✅ `.github/CODEOWNERS`, workflow |
+| CI gate | `.github/workflows/validate.yml` (JSON, agent structure, skill frontmatter, secret scan) | ✅ Created; scan tested locally (clean + positive control detects planted secret) |
+| Merge method enforcement | Repo settings: merge commit only (squash/rebase disabled) | ✅ Encoded in script |
+| History safety | No force-push, no branch deletion, conversation resolution | ✅ Encoded in script |
+| Attack-surface reduction | Wiki + Projects disabled, auto-merge off, delete branch on merge | ✅ Encoded in script |
+| Issue hygiene | Blank issues disabled; structured bug/feature templates; security routed to SECURITY.md | ✅ `.github/ISSUE_TEMPLATE/` |
+| Secret leakage prevention | `.gitignore` (env/keys/credentials) + CI secret-pattern scan | ✅ Done |
+| Dependency monitoring | Dependabot (github-actions, weekly) | ✅ `.github/dependabot.yml` |
+| Conduct policy | `.github/CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) | ✅ Done |
+| Documentation | README "Repository Security" section + layout tree | ✅ Done |
+
+**Policy override recorded**: `.omni/github-policy.md` forbids agents from
+changing branch protection. The user's explicit request of 2026-09-28 takes
+precedence (hierarchy of truth #1: current user request). The script is
+idempotent and re-checkable (`--check`). Repository visibility change remains
+a human action per policy.
+
+**Blocked on user action**: the active `GITHUB_TOKEN` (fine-grained PAT) does
+not include `roger-oliver/omni-agent-builder` in its repository scope (repo is
+private; API returns 404 while SSH access works). To apply protection:
+
+1. GitHub → Settings → Developer settings → Fine-grained tokens → edit token →
+   Repository access → add `roger-oliver/omni-agent-builder`; grant
+   **Administration: Read and write**.
+2. Run `./scripts/apply-repo-security.sh`.
+3. Verify with `./scripts/apply-repo-security.sh --check`.
+4. Make the repo public yourself (Settings → Danger Zone → Change visibility).

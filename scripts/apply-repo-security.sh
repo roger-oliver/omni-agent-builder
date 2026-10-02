@@ -100,7 +100,19 @@ apply_branch_protection() {
 }
 JSON
 )
-    echo "$payload" | gh api -X PUT "${API}/branches/${br}/protection" --input - > /dev/null
+    if ! echo "$payload" | gh api -X PUT "${API}/branches/${br}/protection" --input - > /dev/null 2>&1; then
+        # GitHub Free cannot protect PRIVATE repos (403). Detect and advise.
+        if PROT_ERR=$(echo "$payload" | gh api -X PUT "${API}/branches/${br}/protection" --input - 2>&1; true) && \
+           echo "$PROT_ERR" | grep -qi "GitHub Pro\|public"; then
+            warn "Branch protection on '${br}' needs GitHub Pro while the repo is PRIVATE."
+            warn "  -> Make the repo public (Settings > General > Danger Zone), then re-run this script."
+            exit 3
+        else
+            err "Failed to apply branch protection on '${br}':"
+            echo "$PROT_ERR" | head -3
+            exit 1
+        fi
+    fi
     ok "Branch protection applied: ${br} (PRs required, owner may push directly)"
 }
 

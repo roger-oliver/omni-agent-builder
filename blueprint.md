@@ -724,7 +724,7 @@ OpenCode commands can be added later in `opencode.json`. Recommended commands:
 
 ## 17. Known Conflicts Resolved
 
-1. **Agent count**: The system is not limited to 24 or 25 agents. The final roster includes 34 named agents including codebase exploration, GitHub, and PR-specific agents.
+1. **Agent count**: The system is not limited to 24 or 25 agents. The roster includes 39 named agents (34 original + 5 added in the 2026-09-28 audit: E2E testing, release management, data migrations, accessibility, privacy compliance) including codebase exploration, GitHub, and PR-specific agents.
 2. **Node/TypeScript backend**: Excluded. TypeScript/JavaScript are frontend-focused unless this decision changes later.
 3. **Repo creation**: User creates repos. Agents never create repos.
 4. **GitHub authentication**: `GITHUB_TOKEN` only for API operations; SSH keys for Git transport.

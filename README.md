@@ -95,7 +95,16 @@ my-project/
 │   ├── install.sh                     # Global installer (bash)
 │   ├── install.fish                   # Global installer (fish)
 │   ├── setup-omni-project.sh          # Interactive project setup (bash)
-│   └── setup-omni-project.fish        # Interactive project setup (fish)
+│   ├── setup-omni-project.fish        # Interactive project setup (fish)
+│   └── apply-repo-security.sh         # Branch protection + repo hardening
+├── SECURITY.md                        # Vulnerability reporting + contribution rules
+├── .github/
+│   ├── workflows/validate.yml         # PR CI gate (structure + secret scan)
+│   ├── dependabot.yml                 # Actions updates
+│   ├── CODEOWNERS                     # @roger-oliver reviews everything
+│   ├── pull_request_template.md
+│   ├── CODE_OF_CONDUCT.md
+│   └── ISSUE_TEMPLATE/                # Bug/feature forms; blank issues disabled
 ├── docs/
 │   ├── vocabulary.md                  # Shared jargon glossary
 │   └── agent-skill-audit-2026-09-28.md  # Agent/skill revision tracking
@@ -340,6 +349,32 @@ Typical product repositories:
 - Backend repo: Rust, Python, or C# source code.
 - Optional legacy repo: cloned source for read-only As-Is analysis.
 
+## Repository Security
+
+This repo configures autonomous coding agents, so contributions are treated as
+a security boundary. Current protections:
+
+| Layer | Control |
+|---|---|
+| Contribution path | Fork + pull request only. Branch protection on `main` and `develop` requires 1 approving review, `CODEOWNERS` approval, and a passing `omni-validate` status check. Direct pushes are blocked for everyone except the owner (`enforce_admins: false`). |
+| Merge policy | Merge commits only. Squash and rebase merges are disabled repo-wide (see `.omni/github-policy.md`). |
+| History safety | Force-push and branch deletion blocked on protected branches. Conversation resolution required before merge. |
+| CI gate | `.github/workflows/validate.yml`: JSON validity, agent structure, skill frontmatter, deterministic secret-pattern scan. |
+| Secrets | `.gitignore` blocks `.env`, keys, and credential files. CI fails on committed secret patterns. Env var **names** only (`.omni/agent-operating-contract.md`). |
+| Vulnerability intake | `SECURITY.md` + private vulnerability reporting. Blank issues disabled; structured bug/feature templates route security reports away from the public issue tracker. |
+| Dependency updates | Dependabot for GitHub Actions (weekly). |
+| Attack surface | Wiki and Projects disabled. Auto-merge disabled. Branches deleted on merge. |
+
+Apply or audit the protection rules:
+
+```bash
+./scripts/apply-repo-security.sh          # apply (needs PAT with repo admin)
+./scripts/apply-repo-security.sh --check  # report current state
+```
+
+The script requires the repo to be included in your GitHub fine-grained PAT
+with **Administration: Read and write**. It prints exact instructions if not.
+
 ## GitHub Workflow
 
 Recommended branch flow:
@@ -388,6 +423,7 @@ python3 -m json.tool .omni/orchestrator.config.json >/dev/null
 python3 -m json.tool .omni/orchestrator.config.example.json >/dev/null
 python3 -m json.tool .omni/repo-registry.schema.json >/dev/null
 git diff --check
+./scripts/apply-repo-security.sh --check   # remote protection state
 ```
 
 ## Notes for Future Builders

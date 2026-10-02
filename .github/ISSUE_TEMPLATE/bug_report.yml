@@ -1,0 +1,47 @@
+name: 🐛 Bug report
+description: Report a reproducible bug in agents, skills, policies, or scripts.
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        **Security issues must NOT be reported here** — see [SECURITY.md](../blob/develop/SECURITY.md).
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: Clear, concise description. What did you expect vs. what happened?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run opencode with agent '...'
+        2. Ask '...'
+        3. See error
+    validations:
+      required: true
+  - type: input
+    id: affected
+    attributes:
+      label: Affected files/agents
+      placeholder: "e.g. .opencode/agent/pr-validator.md"
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: [Critical, High, Medium, Low]
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OpenCode version, OS, shell (bash/fish), relevant env var NAMES (never values)
+    validations:
+      required: false

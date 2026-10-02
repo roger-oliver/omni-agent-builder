@@ -1,0 +1,111 @@
+name: Validate
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: omni-validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          set -euo pipefail
+          for f in opencode.json .omni/*.json; do
+            python3 -m json.tool "$f" > /dev/null && echo "JSON OK: $f"
+          done
+
+      - name: Validate agent structure
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re, sys
+          from pathlib import Path
+          ALLOWED = {"mimo/mimo-v2.6-pro", "mimo/mimo-v2.6-flash", "opencode/deepseek-v4-flash"}
+          errors = []
+          files = sorted(Path(".opencode/agent").glob("*.md"))
+          if not files:
+              errors.append("no agent files found")
+          for f in files:
+              t = f.read_text()
+              fm = t.split("---", 2)[1] if t.startswith("---") else ""
+              if re.search(r"^name:", fm, re.M):
+                  errors.append(f"{f.name}: unexpected 'name:' frontmatter field")
+              m = re.search(r"^model: (.+)$", fm, re.M)
+              if not m or m.group(1).strip() not in ALLOWED:
+                  errors.append(f"{f.name}: missing or non-approved model: line")
+              if "agent-operating-contract.md" not in t:
+                  errors.append(f"{f.name}: missing operating-contract reference")
+              for h in ("## Inputs", "## Outputs", "## Boundaries", "## Handoff"):
+                  if h not in t:
+                      errors.append(f"{f.name}: missing section {h}")
+          if errors:
+              print("\n".join(["Agent structure errors:"] + errors))
+              sys.exit(1)
+          print(f"Agent structure OK ({len(files)} agents)")
+          PY
+
+      - name: Validate skill frontmatter
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re, sys
+          from pathlib import Path
+          errors = []
+          files = sorted(Path(".opencode/skills").glob("*/SKILL.md"))
+          for f in files:
+              t = f.read_text()
+              m = re.match(r"^---\nname: ([a-z0-9-]+)\ndescription: (.+?)\n---\n", t, re.S)
+              if not m:
+                  errors.append(f"{f}: invalid frontmatter")
+              elif m.group(1) != f.parent.name:
+                  errors.append(f"{f}: name '{m.group(1)}' != directory '{f.parent.name}'")
+          if errors:
+              print("\n".join(["Skill frontmatter errors:"] + errors))
+              sys.exit(1)
+          print(f"Skill frontmatter OK ({len(files)} skills)")
+          PY
+
+      - name: Secret pattern scan
+        run: |
+          set -euo pipefail
+          # Deterministic grep-based detector (env var NAMES are fine; values are not).
+          PATTERNS=$(mktemp)
+          cat > "$PATTERNS" <<'EOF'
+          AKIA[0-9A-Z]{16}
+          ghp_[A-Za-z0-9]{36}
+          github_pat_[A-Za-z0-9_]{50,}
+          gho_[A-Za-z0-9]{36}
+          xox[baprs]-[A-Za-z0-9-]{10,}
+          -----BEGIN [A-Z ]*PRIVATE KEY-----
+          sk-[A-Za-z0-9]{32,}
+          ://[[:alnum:]._-]+:[^/@[:space:]]+@
+          EOF
+          FAIL=0
+          while IFS= read -r p; do
+            [ -z "$p" ] && continue
+            if grep -rIlE --exclude-dir=.git --exclude-dir=node_modules \
+                 --exclude=validate.yml --exclude=apply-repo-security.sh \
+                 --exclude=SECURITY.md --exclude=SKILL.md \
+                 -e "$p" .; then
+              echo "SECRET PATTERN FOUND: $p"
+              FAIL=1
+            fi
+          done < "$PATTERNS"
+          rm -f "$PATTERNS"
+          if [ "$FAIL" -eq 1 ]; then
+            echo "Secret-like content detected. Commit env var NAMES only (see .omni/agent-operating-contract.md)."
+            exit 1
+          fi
+          echo "Secret scan OK"
+
+      - name: Whitespace / diff hygiene
+        run: git diff --check HEAD || true

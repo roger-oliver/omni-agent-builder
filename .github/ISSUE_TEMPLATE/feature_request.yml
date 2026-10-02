@@ -1,0 +1,37 @@
+name: ✨ Feature request
+description: Suggest a new agent, skill, policy, or capability.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose the change here; implement it in a PR.
+        Keep in mind the project principles (see `blueprint.md`): OpenCode-native,
+        user-created repos only, human-approval gates, no framework lock-in.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or gap
+      description: What is missing today and why does it matter?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: New agent/skill/policy, or change to existing ones. Which files?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: dropdown
+    id: willing
+    attributes:
+      label: Are you willing to open a PR for this?
+      options: ["Yes, I'll contribute", "No — maintainer bandwidth needed"]
+    validations:
+      required: true

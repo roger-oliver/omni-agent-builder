@@ -1,0 +1,97 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "mimo/mimo-v2.6-flash",
+  "small_model": "opencode/deepseek-v4-flash",
+  "default_agent": "omni-orchestrator",
+  "provider": {
+    "mimo": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "MiMo",
+      "options": {
+        "baseURL": "https://token-plan-ams.xiaomimimo.com/v1",
+        "apiKey": "{env:XIAOMI_MIMO_API_KEY}"
+      },
+      "models": {
+        "mimo-v2.6-pro": {
+          "name": "mimo-v2.6-pro",
+          "limit": {
+            "context": 1048576,
+            "output": 131072
+          },
+          "modalities": {
+            "input": ["text", "image", "video", "audio"],
+            "output": ["text"]
+          }
+        },
+        "mimo-v2.6-flash": {
+          "name": "mimo-v2.6-flash",
+          "limit": {
+            "context": 1048576,
+            "output": 131072
+          },
+          "modalities": {
+            "input": ["text", "image", "video", "audio"],
+            "output": ["text"]
+          }
+        }
+      }
+    },
+    "opencode": {
+      "name": "OpenCode Zen",
+      "options": {
+        "baseURL": "https://opencode.ai/zen/v1",
+        "apiKey": "{env:OPENCODE_ZEN_API_KEY}"
+      }
+    }
+  },
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
+  "command": {
+    "omni-onboard-product": {
+      "description": "Register product repos after the user creates them",
+      "template": "Read .omni/orchestrator.config.json and .omni/orchestrator.config.example.json. Ask the user for the product name, GitHub org, and which repos to register (decision_logs, ui_design, frontend, backend, legacy). Update the orchestrator config with the provided values. Confirm the registration is complete."
+    },
+    "omni-new-feature": {
+      "description": "Start strategy/design/build flow for a feature",
+      "template": "Ask the user for the feature name, description, and which product repos are involved. Then orchestrate the full SDLC flow: business interpretation, use case modeling, prioritization, requirements writing, solution architecture, data schema design, API contract design, implementation, testing, security scanning, PR validation, and documentation. Follow the blueprint phases in order."
+    },
+    "omni-as-is": {
+      "description": "Run legacy analysis on a registered legacy repo",
+      "template": "Read .omni/orchestrator.config.json to find the legacy repo entry. Ask the user which legacy repo to analyze. Delegate to legacy-python-analyst, legacy-csharp-analyst, or schema-extractor based on the codebase language. Produce As-Is documentation including architecture, data models, API surface, and dependencies."
+    },
+    "omni-pr-review": {
+      "description": "Validate a PR against requirements, ADRs, tests, security, and traceability",
+      "template": "Ask the user for the PR URL or branch name. Read the PR diff, related requirements, ADRs, acceptance criteria, and traceability matrix. Run pr-validator to check for: requirements coverage, ADR compliance, test presence, security issues, dependency risks, and traceability completeness. Report pass/fail with specific findings."
+    },
+    "omni-release": {
+      "description": "Prepare release branch and release notes",
+      "template": "Delegate to release-manager. It decides the SemVer version from merged changes, creates the release branch from develop, aggregates release notes from the decision log and PR history, and hands off for human approval before merging to main. Merge method is merge commits; never squash or force-push."
+    },
+    "omni-update-traceability": {
+      "description": "Refresh the Requirements Traceability Matrix",
+      "template": "Read the current RTM from the decision_logs repo. Scan all requirements, ADRs, implementations, and tests. Update the traceability matrix to reflect current coverage. Report any gaps where requirements lack implementations or tests."
+    }
+  },
+  "permission": {
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "edit": "ask",
+    "webfetch": "ask",
+    "websearch": "ask",
+    "bash": {
+      "*": "ask",
+      "git init*": "deny",
+      "gh repo create*": "deny",
+      "git remote add*": "deny",
+      "git push --force*": "deny",
+      "git push -f*": "deny",
+      "rm -rf*": "deny"
+    },
+    "external_directory": {
+      "*": "ask",
+      "~/workspace/roger-projects/**": "allow"
+    }
+  }
+}

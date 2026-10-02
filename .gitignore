@@ -1,0 +1,21 @@
+node_modules/
+
+# --- secrets & credentials must never be committed (see SECURITY.md) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+credentials
+credentials.json
+secrets*.json
+*.secret
+
+# --- local noise ---
+.DS_Store
+*.swp
+*~

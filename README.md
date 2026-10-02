@@ -1,8 +1,8 @@
 # Omni-Agent-Builder
 
-Omni-Agent-Builder is a meta-project for defining an OpenCode-based software factory. It contains agent prompts, reusable skills, policy documents, and setup guidance for coordinating specialized AI agents across the full software development lifecycle.
+**An OpenCode-based software factory: 39 specialized AI agents, 19 reusable skills, and enforceable SDLC policies that orchestrate the full product lifecycle — business context, requirements, architecture, data/API design, UI/UX, implementation (Rust/Python/C#/Vue/React), testing, security, observability, releases, and legacy reverse-engineering — across user-registered GitHub repositories, with human-approval gates and decision-log discipline built in.**
 
-This repository is for the **agent system only**. It must not contain generated product frontend code, backend code, UI assets, legacy source code, or product decision logs. Product work happens in separate private GitHub repositories created by the user and registered with the orchestrator.
+Omni-Agent-Builder is a meta-project: it configures the agent system only. It must not contain generated product frontend code, backend code, UI assets, legacy source code, or product decision logs. Product work happens in separate private GitHub repositories created by the user and registered with the orchestrator.
 
 ## Current Status
 

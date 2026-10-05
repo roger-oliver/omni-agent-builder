@@ -77,7 +77,7 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 |---|---|
 | **T1 Thinkers** | `mimo/mimo-v2.6-pro` — deep-reasoning agents |
 | **T2 Builders** | `mimo/mimo-v2.6-flash` — code/test/config generation |
-| **T3 Operators** | `opencode/deepseek-v4-flash` — routing, search, tracking, GitHub ops |
+| **T3 Operators** | `opencode/deepseek-v4.1-flash` — routing, search, tracking, GitHub ops |
 | **Chinese cloud models only** | Approved pool = Xiaomi MiMo + OpenCode Zen non-Anthropic, non-local, non-free-tier, non-deprecated models |
 | **Zen** | OpenCode Zen gateway (`opencode/...` model IDs) |
 | **MiMo** | Xiaomi MiMo API (`mimo/...` model IDs) |

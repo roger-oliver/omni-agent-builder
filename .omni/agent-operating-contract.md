@@ -22,7 +22,7 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Distinguish clearly between `Observed Evidence`, `Assumptions`, `Recommendations`, and `Decisions`.
 - Do not say something was tested, built, pushed, merged, deployed, or verified unless there is tool output or explicit evidence.
 - Do not cite package versions, LTS status, CVEs, or external facts as current unless verified from the repo, installed tooling, lockfiles, or approved external lookup.
-- Do not assume the model can process unlimited context. Configured models (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4-flash`) have **1M-token context windows**; large repositories still require selective exploration, summaries, and chunking.
+- Do not assume the model can process unlimited context. Configured models (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4.1-flash`) have **1M-token context windows**; large repositories still require selective exploration, summaries, and chunking.
 
 ## Safety Rules
 

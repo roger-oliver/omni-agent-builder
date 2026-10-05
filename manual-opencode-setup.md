@@ -17,7 +17,7 @@ Notes:
 - `GITHUB_TOKEN` is used for GitHub API operations.
 - SSH keys are still used for Git clone/fetch/push.
 - `XIAOMI_MIMO_API_KEY` authenticates the `mimo` provider (Xiaomi MiMo API, used for `mimo/mimo-v2.6-pro` and `mimo/mimo-v2.6-flash`).
-- `OPENCODE_ZEN_API_KEY` authenticates the `opencode` provider (OpenCode Zen, used for `opencode/deepseek-v4-flash` and fallback models).
+- `OPENCODE_ZEN_API_KEY` authenticates the `opencode` provider (OpenCode Zen, used for `opencode/deepseek-v4.1-flash` and fallback models).
 - Do not commit real secret values.
 
 ## 2. Model IDs
@@ -29,7 +29,7 @@ The configured model IDs are:
 ```text
 mimo/mimo-v2.6-pro        # T1 Thinkers  - $0.435/$0.87 per 1M tokens, 1M context
 mimo/mimo-v2.6-flash      # T2 Builders  - $0.14/$0.28 per 1M tokens, 1M context
-opencode/deepseek-v4-flash # T3 Operators - $0.14/$0.28 per 1M tokens, 1M context
+opencode/deepseek-v4.1-flash # T3 Operators - $0.30/$1.20 per 1M tokens, 1M context
 ```
 
 Every model ID must include its provider prefix. Keep these IDs in sync across agent frontmatter, `.omni/model-allocation-policy.md`, and `opencode.json`. If a configured model is unavailable, stop and ask; never substitute silently.
@@ -38,7 +38,7 @@ Every model ID must include its provider prefix. Keep these IDs in sync across a
 
 | Agent/work type | Model | Tier |
 |---|---|---|
-| Orchestration | `opencode/deepseek-v4-flash` | T3 |
+| Orchestration | `opencode/deepseek-v4.1-flash` | T3 |
 | Strategy and definition | `mimo/mimo-v2.6-pro` | T1 |
 | Design and architecture | `mimo/mimo-v2.6-pro` | T1 |
 | UI/UX design | `mimo/mimo-v2.6-pro` | T1 |
@@ -51,16 +51,16 @@ Every model ID must include its provider prefix. Keep these IDs in sync across a
 | DevOps and release | `mimo/mimo-v2.6-flash` | T2 |
 | Observability | `mimo/mimo-v2.6-flash` | T2 |
 | Documentation | `mimo/mimo-v2.6-flash` | T2 |
-| Codebase exploration | `opencode/deepseek-v4-flash` | T3 |
-| Traceability governance | `opencode/deepseek-v4-flash` | T3 |
-| GitHub operations | `opencode/deepseek-v4-flash` | T3 |
+| Codebase exploration | `opencode/deepseek-v4.1-flash` | T3 |
+| Traceability governance | `opencode/deepseek-v4.1-flash` | T3 |
+| GitHub operations | `opencode/deepseek-v4.1-flash` | T3 |
 
 Current agent defaults:
 
 ```text
 solution-architect      -> mimo/mimo-v2.6-pro
 ui-ux-designer          -> mimo/mimo-v2.6-pro
-codebase-explorer       -> opencode/deepseek-v4-flash
+codebase-explorer       -> opencode/deepseek-v4.1-flash
 technical-writer        -> mimo/mimo-v2.6-flash
 ```
 
@@ -74,7 +74,7 @@ Create this manually in the repository root or merge it into your existing OpenC
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "mimo/mimo-v2.6-flash",
-  "small_model": "opencode/deepseek-v4-flash",
+  "small_model": "opencode/deepseek-v4.1-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
     "mimo": {

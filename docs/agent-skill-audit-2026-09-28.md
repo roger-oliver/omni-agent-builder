@@ -193,3 +193,32 @@ emails, commit messages, or tracked files.
 
 Note: the machine's GLOBAL git config still uses `<legacy-email-redacted>` (other repos);
 this repo's local config is correct.
+
+## 11. DeepSeek T3 model swap (2026-10-05)
+
+User request: move all `opencode/deepseek-v4-flash` traffic to DeepSeek V4.1
+Flash and mark the old model deprecated/retired in the model-allocation policy.
+
+- Zen catalog verified live: model ID is `deepseek-v4.1-flash` (there is no
+  `deepseek-flash` ID on the catalog — the parenthetical in the request was
+  shorthand). The primary instruction's `opencode/deepseek-v4.1-flash` was used.
+- 37 replacements across 12 files (4 T3 agents, model-allocation skill,
+  operating contract, model-allocation policy, `opencode.json` `small_model`,
+  README, blueprint, manual-opencode-setup, vocabulary). Word-boundary-safe:
+  `deepseek-v4-flash-free` / `-vision-exp` references untouched.
+- T3 price cells updated $0.14/$0.28 → $0.30/$1.20 (Zen list for v4.1-flash).
+- `opencode/deepseek-v4-flash` added to the Do Not Use table (retired
+  2026-10-05, traffic → `opencode/deepseek-v4.1-flash`) in
+  `.omni/model-allocation-policy.md` + `model-allocation` skill.
+- Synced to `~/.config/opencode/` (4 agents, 2 skills, 3 instructions,
+  `opencode.jsonc` `small_model`).
+
+## 12. Repo settings follow-up (2026-10-05)
+
+- `has_wiki=false` re-applied successfully (had flipped back to true).
+- `has_projects=false` remains inert: repeated PATCH returns `projects:true`.
+  Likely account-level Projects (v2) setting overrides the repo flag.
+  Low attack surface — contributors cannot modify Projects anyway; left as-is
+  and documented here.
+- Branch protection + private vulnerability reporting still pending repo
+  visibility change (GitHub Free limitation on private repos).

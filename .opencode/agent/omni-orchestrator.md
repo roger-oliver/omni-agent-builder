@@ -1,7 +1,7 @@
 ---
 description: Primary Omni orchestrator for coordinating software-product creation workflows across registered repositories.
 mode: primary
-model: opencode/deepseek-v4-flash
+model: opencode/deepseek-v4.1-flash
 permission:
   edit: ask
   bash: ask

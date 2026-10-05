@@ -58,3 +58,11 @@ First public release of the Omni agent system.
 - `docs/vocabulary.md` (shared jargon glossary).
 - `docs/agent-skill-audit-2026-09-28.md` (full audit tracking).
 - Refreshed `README.md`, `blueprint.md`, `manual-opencode-setup.md`.
+
+## Unreleased
+
+- **T3 model swap**: `opencode/deepseek-v4-flash` → `opencode/deepseek-v4.1-flash`
+  (T3 Operators: `omni-orchestrator`, `codebase-explorer`, `traceability-keeper`,
+  `github-operator`; also `small_model` default). `deepseek-v4-flash` marked
+  **retired** in the model-allocation policy (2026-10-05) with all traffic
+  redirected to the replacement.

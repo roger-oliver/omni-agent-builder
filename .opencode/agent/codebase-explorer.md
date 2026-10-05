@@ -1,7 +1,7 @@
 ---
 description: Explores registered codebases for structure, conventions, dependencies, and implementation evidence before other agents make decisions.
 mode: subagent
-model: opencode/deepseek-v4-flash
+model: opencode/deepseek-v4.1-flash
 permission:
   edit: deny
   bash: ask

@@ -62,6 +62,8 @@ First public release of the Omni agent system.
 ## Unreleased
 
 - **T3 model swap**: `opencode/deepseek-v4-flash` → `opencode/deepseek-v4.1-flash`
+  (CI allowlist in `validate.yml` updated to match — the workflow was missed in
+  the first swap pass and rejected the new ID)
   (T3 Operators: `omni-orchestrator`, `codebase-explorer`, `traceability-keeper`,
   `github-operator`; also `small_model` default). `deepseek-v4-flash` marked
   **retired** in the model-allocation policy (2026-10-05) with all traffic

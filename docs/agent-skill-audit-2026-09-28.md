@@ -222,3 +222,14 @@ Flash and mark the old model deprecated/retired in the model-allocation policy.
   and documented here.
 - Branch protection + private vulnerability reporting still pending repo
   visibility change (GitHub Free limitation on private repos).
+
+## 13. CI allowlist follow-up (2026-10-05)
+
+The `omni-validate` workflow's approved-model set in
+`.github/workflows/validate.yml` still listed `opencode/deepseek-v4-flash`
+after the T3 swap (`.github/` was excluded from the swap sweep's grep paths),
+so push CI on `74f1399` failed with "missing or non-approved model" for the
+4 correctly-swapped T3 agents. Fix: allowlist updated to
+`{mimo/mimo-v2.6-pro, mimo/mimo-v2.6-flash, opencode/deepseek-v4.1-flash}`.
+Lesson recorded: model-ID sweeps must include `.github/` (workflow allowlists),
+not only agents/policies/docs.

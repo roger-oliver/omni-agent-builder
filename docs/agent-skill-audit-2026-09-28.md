@@ -254,3 +254,33 @@ files, `git log --all -p`, per-commit blobs, the 126KB
 False positive logged: `security-review` skill documents the
 inline-URL-credentials detection pattern (scheme + user + pass + at-sign)
 itself; excluded in future scans by design.
+
+## 15. History email scrub (2026-10-05)
+
+User request: remove exposed emails / important info from older commits.
+
+Exposure inventory (pre-scrub): (a) author metadata `personal-email` on all
+commits, (b) commit message of the attribution-normalization commit quoting
+two addresses, (c) audit doc §10 quoting the address mapping in 9 blobs,
+(d) GitHub still serving pre-rewrite SHAs by direct SHA URL.
+
+Action: `git filter-branch` with env + msg + tree filters over all refs:
+- metadata → `7400312+roger-oliver@users.noreply.github.com` (GitHub noreply;
+  attribution to `roger-oliver` preserved, no personal address)
+- messages + file content → labels `<primary-email-redacted>`,
+  `<legacy-email-redacted>`, `<work-email-redacted>`
+- `v0.1.0` tag re-pointed at the rewritten merge commit (original annotated
+  message preserved); release follows the tag name
+- backup bundle: `/tmp/opencode/pre-scrub-backup/pre-email-scrub.bundle`
+  (local, outside the repo)
+
+Verified post-scrub (local refs + remote API): zero personal addresses in
+metadata, messages, or any blob; remote tips attribute to `roger-oliver`;
+CI `omni-validate` green on the new tip. Branch protection re-locked
+(force-push forbidden) after the rewrite; the `main-protection` ruleset was
+left untouched.
+
+Known residual exposure: GitHub serves unreachable pre-rewrite objects by
+direct SHA (`4773cfb`…, `6dfc1c6`…) until its garbage collection, and push
+Events / third-party caches may list old SHAs. Guaranteed purge requires
+GitHub Support. Clones made before the rewrite retain old history.

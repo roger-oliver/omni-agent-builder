@@ -284,3 +284,17 @@ Known residual exposure: GitHub serves unreachable pre-rewrite objects by
 direct SHA (`4773cfb`…, `6dfc1c6`…) until its garbage collection, and push
 Events / third-party caches may list old SHAs. Guaranteed purge requires
 GitHub Support. Clones made before the rewrite retain old history.
+
+## 16. Design transcript removed from history (2026-10-05)
+
+User decision (supersedes DEF-006 "accepted"): `all-history-conversation.md`
+(126KB DeepSeek design transcript) erased from **every commit** of the public
+repo via tree-filter, plus its README layout line. Preserved in a **private,
+versioned notes repository** at `~/workspace/roger-projects/omni-agent-builder-notes/`
+together with `backups/pre-email-scrub.bundle` (full pre-scrub history).
+That notes repo must never be made public (its README warns accordingly).
+
+Same force-push/re-lock dance as §15; `v0.1.0` tag re-pointed again. Verified:
+0 commits contain the file; 0 README mentions; emails still noreply-only.
+Residual exposure unchanged from §15 (unreachable SHAs served until GitHub GC
+— support purge request pending user action).

@@ -251,5 +251,6 @@ files, `git log --all -p`, per-commit blobs, the 126KB
 | DEF-005 | Personal emails in public audit doc (§10) + git commit metadata (`<primary-email-redacted>`) | Low | accepted (author's own identity; normal for public git) |
 | DEF-006 | `all-history-conversation.md` = internal DeepSeek planning transcript now public; reviewed: no credentials/IPs/keys; contains env-var NAMES and vendor mentions (Vast.ai, Xiaomi) | Low | accepted (intentional per prior decision) — re-review if vendor agreements require it |
 
-False positive logged: `security-review` skill documents the `proto://user:pass@`
-detection pattern itself; excluded in future scans by design.
+False positive logged: `security-review` skill documents the
+inline-URL-credentials detection pattern (scheme + user + pass + at-sign)
+itself; excluded in future scans by design.

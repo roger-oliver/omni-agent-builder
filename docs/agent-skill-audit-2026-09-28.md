@@ -233,3 +233,23 @@ so push CI on `74f1399` failed with "missing or non-approved model" for the
 `{mimo/mimo-v2.6-pro, mimo/mimo-v2.6-flash, opencode/deepseek-v4.1-flash}`.
 Lesson recorded: model-ID sweeps must include `.github/` (workflow allowlists),
 not only agents/policies/docs.
+
+## 14. Exposure / secret audit (2026-10-05)
+
+Question: "any sensitive secret or password exposed? anything exposed?"
+Tool-first scan: expanded pattern set (AWS, GitHub, Slack, OpenAI/Anthropic,
+Google, JWT, private keys, URL creds, key=value assignments) over tracked
+files, `git log --all -p`, per-commit blobs, the 126KB
+`all-history-conversation.md` transcript, and global `opencode` configs.
+
+| DEF | Finding | Severity | Status |
+|---|---|---|---|
+| DEF-001 | **No secrets found** (values): zero matches in tracked files, full history, transcript, global configs. `opencode.jsonc` uses `{env:...}` refs only | — | clean |
+| DEF-002 | GitHub secret scanning + push protection disabled while repo is PUBLIC | Medium | **fixed**: enabled via API |
+| DEF-003 | Dependabot security updates disabled | Low | **fixed**: enabled via API |
+| DEF-004 | Branch protection + private vulnerability reporting missing (was blocked on private repo) | High | **fixed**: applied after visibility change |
+| DEF-005 | Personal emails in public audit doc (§10) + git commit metadata (`<primary-email-redacted>`) | Low | accepted (author's own identity; normal for public git) |
+| DEF-006 | `all-history-conversation.md` = internal DeepSeek planning transcript now public; reviewed: no credentials/IPs/keys; contains env-var NAMES and vendor mentions (Vast.ai, Xiaomi) | Low | accepted (intentional per prior decision) — re-review if vendor agreements require it |
+
+False positive logged: `security-review` skill documents the `proto://user:pass@`
+detection pattern itself; excluded in future scans by design.

@@ -158,7 +158,7 @@ Shared non-negotiable behavior contract for all agents. It defines source-of-tru
 
 ### `.omni/model-allocation-policy.md`
 
-Three-tier model routing over Chinese cloud models only (no Anthropic, no local runtimes). `mimo/mimo-v2.6-pro` for deep-reasoning agents, `mimo/mimo-v2.6-flash` for code/test generation, `opencode/deepseek-v4-flash` for routing and lightweight operations — all with 1M-token context windows.
+Three-tier model routing over Chinese cloud models only (no Anthropic, no local runtimes). `mimo/mimo-v2.6-pro` for deep-reasoning agents, `mimo/mimo-v2.6-flash` for code/test generation, `opencode/deepseek-v4.1-flash` for routing and lightweight operations — all with 1M-token context windows.
 
 ### `.opencode/agent/`
 
@@ -274,7 +274,7 @@ Craft and quality:
 
 - Default agent: `omni-orchestrator`
 - Default model: `mimo/mimo-v2.6-flash`
-- Small model: `opencode/deepseek-v4-flash`
+- Small model: `opencode/deepseek-v4.1-flash`
 - Skills path: `.opencode/skills`
 - Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
 - Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
@@ -302,11 +302,11 @@ All Omni agents run on Chinese cloud models. Anthropic models and local runtimes
 |---|---|---|---|---|
 | T1 Thinkers | `mimo/mimo-v2.6-pro` | $0.435 / $0.87 | 1M tokens | Strategy, requirements, architecture, schema/API design, UI/UX, legacy analysis, security analysis, PR validation |
 | T2 Builders | `mimo/mimo-v2.6-flash` | $0.14 / $0.28 | 1M tokens | Backend/frontend code generation, unit tests, QA, DevOps, observability, documentation, schema extraction |
-| T3 Operators | `opencode/deepseek-v4-flash` | $0.14 / $0.28 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub API operations |
+| T3 Operators | `opencode/deepseek-v4.1-flash` | $0.30 / $1.20 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub API operations |
 
 | Work type | Model | Tier |
 |---|---|---|
-| Orchestration | `opencode/deepseek-v4-flash` | T3 |
+| Orchestration | `opencode/deepseek-v4.1-flash` | T3 |
 | Strategy and definition | `mimo/mimo-v2.6-pro` | T1 |
 | Design and architecture | `mimo/mimo-v2.6-pro` | T1 |
 | UI/UX design | `mimo/mimo-v2.6-pro` | T1 |
@@ -319,9 +319,9 @@ All Omni agents run on Chinese cloud models. Anthropic models and local runtimes
 | DevOps and release | `mimo/mimo-v2.6-flash` | T2 |
 | Observability | `mimo/mimo-v2.6-flash` | T2 |
 | Documentation | `mimo/mimo-v2.6-flash` | T2 |
-| Codebase exploration | `opencode/deepseek-v4-flash` | T3 |
-| Traceability governance | `opencode/deepseek-v4-flash` | T3 |
-| GitHub operations | `opencode/deepseek-v4-flash` | T3 |
+| Codebase exploration | `opencode/deepseek-v4.1-flash` | T3 |
+| Traceability governance | `opencode/deepseek-v4.1-flash` | T3 |
+| GitHub operations | `opencode/deepseek-v4.1-flash` | T3 |
 
 Rules:
 

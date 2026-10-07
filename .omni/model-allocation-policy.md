@@ -5,7 +5,7 @@ Omni runs entirely on **Chinese cloud models** — Anthropic models and local ru
 | Provider | Auth env | Endpoint | Models used |
 |---|---|---|---|
 | `mimo` (Xiaomi MiMo) | `XIAOMI_MIMO_API_KEY` | Xiaomi MiMo API | `mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash` |
-| `opencode` (OpenCode Zen) | `OPENCODE_ZEN_API_KEY` | `https://opencode.ai/zen/v1` | `opencode/deepseek-v4-flash` (plus the full Zen catalog as fallback candidates) |
+| `opencode` (OpenCode Zen) | `OPENCODE_ZEN_API_KEY` | `https://opencode.ai/zen/v1` | `opencode/deepseek-v4.1-flash` (plus the full Zen catalog as fallback candidates) |
 
 ## Model Tiers
 
@@ -13,7 +13,7 @@ Omni runs entirely on **Chinese cloud models** — Anthropic models and local ru
 |---|---|---|---|---|
 | **T1 Thinkers** | `mimo/mimo-v2.6-pro` | $0.435 / $0.87 | 1M tokens | Agents that "think on a solution": architecture, schema/API design, strategy, requirements, legacy reverse-engineering, security analysis, visual design, PR gate |
 | **T2 Builders** | `mimo/mimo-v2.6-flash` | $0.14 / $0.28 | 1M tokens | Agents that generate code, tests, or configs at volume or iterate with tools (RL-trained agentic coding) |
-| **T3 Operators** | `opencode/deepseek-v4-flash` | $0.14 / $0.28 | 1M tokens | Routing, API calls, classification, tracking, search — fast and cheap; also gives provider diversity if the Xiaomi API is down |
+| **T3 Operators** | `opencode/deepseek-v4.1-flash` | $0.30 / $1.20 | 1M tokens | Routing, API calls, classification, tracking, search — fast and cheap; also gives provider diversity if the Xiaomi API is down |
 
 A 1M-token context window is still a limit, not permission to load entire large repositories blindly. Agents must summarize, chunk, and inspect selectively when repositories exceed what is needed for the task.
 
@@ -21,7 +21,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 
 | Agent type | Model | Tier | Reasoning |
 |---|---|---|---|
-| Orchestration | `opencode/deepseek-v4-flash` | T3 | High-frequency routing; provider diversity |
+| Orchestration | `opencode/deepseek-v4.1-flash` | T3 | High-frequency routing; provider diversity |
 | Strategy and definition | `mimo/mimo-v2.6-pro` | T1 | Complex reasoning for business analysis and requirements |
 | Design and architecture | `mimo/mimo-v2.6-pro` | T1 | Top-tier reasoning for schema and API design |
 | UI/UX design | `mimo/mimo-v2.6-pro` | T1 | Omnimo­dal input (text/image/video/audio); strong visual-coding scores |
@@ -34,9 +34,9 @@ A 1M-token context window is still a limit, not permission to load entire large 
 | DevOps and release | `mimo/mimo-v2.6-flash` | T2 | Pipeline and rollback configurations |
 | Observability | `mimo/mimo-v2.6-flash` | T2 | Logging/monitoring strategy close to implementation |
 | Documentation | `mimo/mimo-v2.6-flash` | T2 | Documentation synthesis |
-| Codebase search / explorer | `opencode/deepseek-v4-flash` | T3 | Fast, low-cost classification and search |
-| Traceability governance | `opencode/deepseek-v4-flash` | T3 | Fast updates for RTM tracking |
-| GitHub operations | `opencode/deepseek-v4-flash` | T3 | GitHub API operations |
+| Codebase search / explorer | `opencode/deepseek-v4.1-flash` | T3 | Fast, low-cost classification and search |
+| Traceability governance | `opencode/deepseek-v4.1-flash` | T3 | Fast updates for RTM tracking |
+| GitHub operations | `opencode/deepseek-v4.1-flash` | T3 | GitHub API operations |
 
 ## Agent Model Defaults
 
@@ -81,7 +81,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 - `alerting-monitor`
 - `technical-writer`
 
-### T3 Operators — `opencode/deepseek-v4-flash`
+### T3 Operators — `opencode/deepseek-v4.1-flash`
 
 - `omni-orchestrator`
 - `codebase-explorer`
@@ -91,7 +91,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 ### OpenCode defaults
 
 - `model`: `mimo/mimo-v2.6-flash`
-- `small_model`: `opencode/deepseek-v4-flash`
+- `small_model`: `opencode/deepseek-v4.1-flash`
 
 ## Rules
 
@@ -106,6 +106,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 |---|---|
 | Any `claude-*` | Excluded by decision |
 | Local runtimes (`vllm/`, `ollama/`, `llama.cpp`) | Excluded by decision |
+| `opencode/deepseek-v4-flash` | **Retired 2026-10-05 (user decision)** — all T3 traffic redirects to `opencode/deepseek-v4.1-flash` |
 | `opencode/gemini-3-pro` | **Deprecated** on OpenCode Zen (2026-03-09) |
 | `opencode/kimi-k2.5`, `opencode/glm-5`, `opencode/minimax-m2.5` | Deprecated on OpenCode Zen |
 | Zen `-free` tiers (`deepseek-v4-flash-free`, `mimo-v2.6-flash-free`, …) | Hard daily usage limits, "limited time" availability, data may be used for model improvement |

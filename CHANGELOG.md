@@ -58,3 +58,30 @@ First public release of the Omni agent system.
 - `docs/vocabulary.md` (shared jargon glossary).
 - `docs/agent-skill-audit-2026-09-28.md` (full audit tracking).
 - Refreshed `README.md`, `blueprint.md`, `manual-opencode-setup.md`.
+
+## v0.1.1 — 2026-10-05
+
+Model-allocation fix and repository hardening.
+
+### Fixed
+- **DeepSeek V4 Flash is deprecated/retired** — all T3 Operator traffic
+  (`omni-orchestrator`, `codebase-explorer`, `traceability-keeper`,
+  `github-operator`, and `small_model`) now routes to
+  `opencode/deepseek-v4.1-flash`. New users hitting the dead endpoint no
+  longer waste time debugging. Closes #3.
+- `omni-validate` CI allowlist updated to the new model ID (the workflow
+  gate initially rejected the correctly-swapped agents).
+
+### Security
+- Exposure/secret audit across tracked files, full git history, and
+  configs: zero secret values found. GitHub secret scanning + push
+  protection + Dependabot security updates enabled.
+- Branch protection on `main`/`develop`: PRs required, CODEOWNERS review,
+  `omni-validate` required check; force-push and branch deletion blocked;
+  private vulnerability reporting enabled.
+- Personal email addresses scrubbed from all commit metadata
+  (GitHub noreply now, attribution preserved) and from commit
+  messages/file content (redaction labels). Pre-rewrite history kept in a
+  private notes repository.
+- Internal design transcript (`all-history-conversation.md`) erased from
+  history; preserved in the private notes repository.

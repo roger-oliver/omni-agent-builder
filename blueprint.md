@@ -153,7 +153,7 @@ Conceptual `opencode.json` skeleton:
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "mimo/mimo-v2.6-flash",
-  "small_model": "opencode/deepseek-v4-flash",
+  "small_model": "opencode/deepseek-v4.1-flash",
   "default_agent": "omni-orchestrator",
   "provider": {
     "mimo": {
@@ -230,7 +230,7 @@ The model tiers are:
 |---|---|---|---|---|
 | T1 Thinkers | `mimo/mimo-v2.6-pro` | $0.435 / $0.87 | 1M tokens | Deep reasoning: architecture, schema/API design, strategy, requirements, legacy analysis, security analysis, UI/UX, PR validation |
 | T2 Builders | `mimo/mimo-v2.6-flash` | $0.14 / $0.28 | 1M tokens | Code/test/config generation, QA, DevOps, observability, documentation |
-| T3 Operators | `opencode/deepseek-v4-flash` | $0.14 / $0.28 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub operations |
+| T3 Operators | `opencode/deepseek-v4.1-flash` | $0.30 / $1.20 | 1M tokens | Orchestration routing, codebase search, traceability, GitHub operations |
 
 A 1M-token context window is still a limit. Agents must not blindly load entire large repositories. They should use selective exploration, chunking, summaries, and dedicated codebase search/explorer behavior when needed.
 
@@ -238,14 +238,14 @@ Recommended allocation:
 
 | Agent Type | Model | Tier | Reasoning |
 |---|---|---|---|
-| Orchestration | `opencode/deepseek-v4-flash` | T3 | High-frequency calls; provider diversity if the Xiaomi API is down |
+| Orchestration | `opencode/deepseek-v4.1-flash` | T3 | High-frequency calls; provider diversity if the Xiaomi API is down |
 | Backend/Frontend code generation | `mimo/mimo-v2.6-flash` | T2 | High-volume code output with agentic tool use |
 | Code review / PR validation | `mimo/mimo-v2.6-pro` | T1 | Consequential quality-gate judgment |
 | Unit test generation | `mimo/mimo-v2.6-flash` | T2 | Same builder profile as implementation |
 | SAST security scanning | Rule engine + `mimo/mimo-v2.6-pro` | T1 | Prefer deterministic scanners; LLM assists triage |
 | UI/UX design | `mimo/mimo-v2.6-pro` | T1 | Omnimo­dal input (text/image/video/audio) |
 | Complex architecture decisions | `mimo/mimo-v2.6-pro` | T1 | Top-tier open-weight reasoning score |
-| Codebase search / explorer | `opencode/deepseek-v4-flash` | T3 | Fast, low-cost classification and search |
+| Codebase search / explorer | `opencode/deepseek-v4.1-flash` | T3 | Fast, low-cost classification and search |
 | Documentation / librarian | `mimo/mimo-v2.6-flash` | T2 | Documentation synthesis |
 | Logging strategy / observability | `mimo/mimo-v2.6-flash` | T2 | Close to implementation and code instrumentation |
 
@@ -280,7 +280,7 @@ The primary orchestrator should use:
 ---
 description: Primary Omni orchestrator for coordinating product creation workflows.
 mode: primary
-model: opencode/deepseek-v4-flash
+model: opencode/deepseek-v4.1-flash
 ---
 ```
 
@@ -641,7 +641,7 @@ Process and governance:
 7. `dependency-selection` — package/framework selection with SPDX license posture and audit tools.
 8. `docs-structure` — documentation information architecture and release-notes template.
 9. `legacy-analysis` — how to produce As-Is documentation.
-10. `model-allocation` — three Chinese cloud model tiers (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4-flash`).
+10. `model-allocation` — three Chinese cloud model tiers (`mimo/mimo-v2.6-pro`, `mimo/mimo-v2.6-flash`, `opencode/deepseek-v4.1-flash`).
 
 Craft and quality:
 

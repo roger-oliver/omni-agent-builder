@@ -193,3 +193,108 @@ emails, commit messages, or tracked files.
 
 Note: the machine's GLOBAL git config still uses `<legacy-email-redacted>` (other repos);
 this repo's local config is correct.
+
+## 11. DeepSeek T3 model swap (2026-10-05)
+
+User request: move all `opencode/deepseek-v4-flash` traffic to DeepSeek V4.1
+Flash and mark the old model deprecated/retired in the model-allocation policy.
+
+- Zen catalog verified live: model ID is `deepseek-v4.1-flash` (there is no
+  `deepseek-flash` ID on the catalog — the parenthetical in the request was
+  shorthand). The primary instruction's `opencode/deepseek-v4.1-flash` was used.
+- 37 replacements across 12 files (4 T3 agents, model-allocation skill,
+  operating contract, model-allocation policy, `opencode.json` `small_model`,
+  README, blueprint, manual-opencode-setup, vocabulary). Word-boundary-safe:
+  `deepseek-v4-flash-free` / `-vision-exp` references untouched.
+- T3 price cells updated $0.14/$0.28 → $0.30/$1.20 (Zen list for v4.1-flash).
+- `opencode/deepseek-v4-flash` added to the Do Not Use table (retired
+  2026-10-05, traffic → `opencode/deepseek-v4.1-flash`) in
+  `.omni/model-allocation-policy.md` + `model-allocation` skill.
+- Synced to `~/.config/opencode/` (4 agents, 2 skills, 3 instructions,
+  `opencode.jsonc` `small_model`).
+
+## 12. Repo settings follow-up (2026-10-05)
+
+- `has_wiki=false` re-applied successfully (had flipped back to true).
+- `has_projects=false` remains inert: repeated PATCH returns `projects:true`.
+  Likely account-level Projects (v2) setting overrides the repo flag.
+  Low attack surface — contributors cannot modify Projects anyway; left as-is
+  and documented here.
+- Branch protection + private vulnerability reporting still pending repo
+  visibility change (GitHub Free limitation on private repos).
+
+## 13. CI allowlist follow-up (2026-10-05)
+
+The `omni-validate` workflow's approved-model set in
+`.github/workflows/validate.yml` still listed `opencode/deepseek-v4-flash`
+after the T3 swap (`.github/` was excluded from the swap sweep's grep paths),
+so push CI on `74f1399` failed with "missing or non-approved model" for the
+4 correctly-swapped T3 agents. Fix: allowlist updated to
+`{mimo/mimo-v2.6-pro, mimo/mimo-v2.6-flash, opencode/deepseek-v4.1-flash}`.
+Lesson recorded: model-ID sweeps must include `.github/` (workflow allowlists),
+not only agents/policies/docs.
+
+## 14. Exposure / secret audit (2026-10-05)
+
+Question: "any sensitive secret or password exposed? anything exposed?"
+Tool-first scan: expanded pattern set (AWS, GitHub, Slack, OpenAI/Anthropic,
+Google, JWT, private keys, URL creds, key=value assignments) over tracked
+files, `git log --all -p`, per-commit blobs, the 126KB
+`all-history-conversation.md` transcript, and global `opencode` configs.
+
+| DEF | Finding | Severity | Status |
+|---|---|---|---|
+| DEF-001 | **No secrets found** (values): zero matches in tracked files, full history, transcript, global configs. `opencode.jsonc` uses `{env:...}` refs only | — | clean |
+| DEF-002 | GitHub secret scanning + push protection disabled while repo is PUBLIC | Medium | **fixed**: enabled via API |
+| DEF-003 | Dependabot security updates disabled | Low | **fixed**: enabled via API |
+| DEF-004 | Branch protection + private vulnerability reporting missing (was blocked on private repo) | High | **fixed**: applied after visibility change |
+| DEF-005 | Personal emails in public audit doc (§10) + git commit metadata (`<primary-email-redacted>`) | Low | accepted (author's own identity; normal for public git) |
+| DEF-006 | `all-history-conversation.md` = internal DeepSeek planning transcript now public; reviewed: no credentials/IPs/keys; contains env-var NAMES and vendor mentions (Vast.ai, Xiaomi) | Low | accepted (intentional per prior decision) — re-review if vendor agreements require it |
+
+False positive logged: `security-review` skill documents the
+inline-URL-credentials detection pattern (scheme + user + pass + at-sign)
+itself; excluded in future scans by design.
+
+## 15. History email scrub (2026-10-05)
+
+User request: remove exposed emails / important info from older commits.
+
+Exposure inventory (pre-scrub): (a) author metadata `personal-email` on all
+commits, (b) commit message of the attribution-normalization commit quoting
+two addresses, (c) audit doc §10 quoting the address mapping in 9 blobs,
+(d) GitHub still serving pre-rewrite SHAs by direct SHA URL.
+
+Action: `git filter-branch` with env + msg + tree filters over all refs:
+- metadata → `7400312+roger-oliver@users.noreply.github.com` (GitHub noreply;
+  attribution to `roger-oliver` preserved, no personal address)
+- messages + file content → labels `<primary-email-redacted>`,
+  `<legacy-email-redacted>`, `<work-email-redacted>`
+- `v0.1.0` tag re-pointed at the rewritten merge commit (original annotated
+  message preserved); release follows the tag name
+- backup bundle: `/tmp/opencode/pre-scrub-backup/pre-email-scrub.bundle`
+  (local, outside the repo)
+
+Verified post-scrub (local refs + remote API): zero personal addresses in
+metadata, messages, or any blob; remote tips attribute to `roger-oliver`;
+CI `omni-validate` green on the new tip. Branch protection re-locked
+(force-push forbidden) after the rewrite; the `main-protection` ruleset was
+left untouched.
+
+Known residual exposure: GitHub serves unreachable pre-rewrite objects by
+direct SHA (`4773cfb`…, `6dfc1c6`…) until its garbage collection, and push
+Events / third-party caches may list old SHAs. Guaranteed purge requires
+GitHub Support. Clones made before the rewrite retain old history.
+
+## 16. Design transcript removed from history (2026-10-05)
+
+User decision (supersedes DEF-006 "accepted"): `all-history-conversation.md`
+(126KB DeepSeek design transcript) erased from **every commit** of the public
+repo via tree-filter, plus its README layout line. Preserved in a **private,
+versioned notes repository** at `~/workspace/roger-projects/omni-agent-builder-notes/`
+together with `backups/pre-email-scrub.bundle` (full pre-scrub history).
+That notes repo must never be made public (its README warns accordingly).
+
+Same force-push/re-lock dance as §15; `v0.1.0` tag re-pointed again. Verified:
+0 commits contain the file; 0 README mentions; emails still noreply-only.
+Residual exposure unchanged from §15 (unreachable SHAs served until GitHub GC
+— support purge request pending user action).

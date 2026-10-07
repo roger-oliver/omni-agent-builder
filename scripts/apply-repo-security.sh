@@ -124,8 +124,8 @@ import json,sys
 d=json.load(sys.stdin)
 rpr=d.get('required_pull_request_reviews',{})
 print(f\"  ${br}: PRs required (reviews={rpr.get('required_approving_review_count')}, codeowners={rpr.get('require_code_owner_reviews')}), \"
-      f\"force-push={d.get('allow_force_pushes',{}).get('enabled')}, deletions={d.get('allow_deletions',{}).get('enabled')}, \"
-      f\"admin-enforced={d.get('enforce_admins',{}).get('enabled')}, checks={[c['context'] for c in d.get('required_status_checks',{}).get('contexts',[])]}\")
+      f\"force-push={d.get('allow_force_pushes')}, deletions={d.get('allow_deletions')}, \"
+      f\"admin-bypass={d.get('enforce_admins')}, checks={d.get('required_status_checks')}\")
 "
     else
         warn "  ${br}: NO PROTECTION"

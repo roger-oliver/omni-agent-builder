@@ -91,7 +91,7 @@
     },
     "external_directory": {
       "*": "ask",
-      "~/workspace/roger-projects/**": "allow"
+      "~/omni-projects/**": "allow"
     }
   }
 }

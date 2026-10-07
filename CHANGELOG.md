@@ -3,6 +3,13 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## Unreleased
+
+- **Portability cleanup**: removed all personal path references
+  from docs, templates, and configs.
+  `setup-omni` scripts now require an explicit base clone directory (no
+  default) and explain that any directory can be chosen.
+
 ## v0.1.0 — 2026-09-28
 
 First public release of the Omni agent system.

@@ -23,7 +23,7 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 |---|---|
 | **decision_logs repo** | The product's control repository: requirements, ADRs, RTM, QA reports, release notes |
 | **Registered repo** | A repo listed in `.omni/orchestrator.config.json` (`decision_logs`, `ui_design`, `frontend`, `backend`, `legacy`) — the only repos agents may touch |
-| **Clone base path** | `~/workspace/roger-projects` — where registered repos live locally |
+| **Clone base path** | User-chosen directory where registered repos are cloned (configured per project in `.omni/orchestrator.config.json`) |
 | **develop / release/* / main** | Branch model: `feature/*` → `develop` → `release/<version>` → `main` |
 | **Merge commit** | The **only** allowed PR merge method (history preserved; no squash, no rebase-merge, no force-push) |
 | **PR loop** | pr-validator ↔ builder fix cycle; **max 3 loops**, then human escalation |

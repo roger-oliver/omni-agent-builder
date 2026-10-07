@@ -26,17 +26,17 @@ The intended result is an OpenCode-based software factory where a primary orches
 All product-related repositories should be cloned under:
 
 ```text
-~/workspace/roger-projects/<repo>
+~/omni-projects/<repo>
 ```
 
 Example product workspace:
 
 ```text
-~/workspace/roger-projects/my-product-decisions
-~/workspace/roger-projects/my-product-ui
-~/workspace/roger-projects/my-product-frontend
-~/workspace/roger-projects/my-product-backend
-~/workspace/roger-projects/my-product-legacy
+~/omni-projects/my-product-decisions
+~/omni-projects/my-product-ui
+~/omni-projects/my-product-frontend
+~/omni-projects/my-product-backend
+~/omni-projects/my-product-legacy
 ```
 
 The user creates private GitHub repositories on demand and provides the SSH URLs to the orchestrator. The orchestrator records them in an Omni-specific config file, not in `opencode.json`.
@@ -53,32 +53,32 @@ Conceptual shape:
 {
   "projects": {
     "example-product": {
-      "clone_base_path": "~/workspace/roger-projects",
+      "clone_base_path": "~/omni-projects",
       "stack_selection_mode": "always_ask",
       "repos": {
         "decision_logs": {
           "ssh_url": "git@github.com:org/example-product-decisions.git",
-          "local_path": "~/workspace/roger-projects/example-product-decisions",
+          "local_path": "~/omni-projects/example-product-decisions",
           "purpose": "strategy, requirements, ADRs, traceability, release notes"
         },
         "ui_design": {
           "ssh_url": "git@github.com:org/example-product-ui.git",
-          "local_path": "~/workspace/roger-projects/example-product-ui",
+          "local_path": "~/omni-projects/example-product-ui",
           "purpose": "wireframes, design tokens, UX specs, exported prototypes"
         },
         "frontend": {
           "ssh_url": "git@github.com:org/example-product-frontend.git",
-          "local_path": "~/workspace/roger-projects/example-product-frontend",
+          "local_path": "~/omni-projects/example-product-frontend",
           "purpose": "frontend source code"
         },
         "backend": {
           "ssh_url": "git@github.com:org/example-product-backend.git",
-          "local_path": "~/workspace/roger-projects/example-product-backend",
+          "local_path": "~/omni-projects/example-product-backend",
           "purpose": "backend source code"
         },
         "legacy": {
           "ssh_url": "git@github.com:org/example-product-legacy.git",
-          "local_path": "~/workspace/roger-projects/example-product-legacy",
+          "local_path": "~/omni-projects/example-product-legacy",
           "purpose": "legacy source code for as-is analysis"
         }
       },
@@ -202,7 +202,7 @@ Conceptual `opencode.json` skeleton:
     },
     "external_directory": {
       "*": "ask",
-      "~/workspace/roger-projects/**": "allow"
+      "~/omni-projects/**": "allow"
     }
   },
   "skills": {

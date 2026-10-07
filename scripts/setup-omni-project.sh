@@ -37,9 +37,13 @@ print_header "GitHub Configuration"
 read -p "$(echo -e "${BLUE}GitHub org/username (or press Enter for placeholder): ${NC}")" GITHUB_ORG
 GITHUB_ORG="${GITHUB_ORG:-YOUR_ORG}"
 
-# Get base clone path
-read -p "$(echo -e "${BLUE}Base clone path [~/workspace/roger-projects]: ${NC}")" CLONE_BASE
-CLONE_BASE="${CLONE_BASE:-~/workspace/roger-projects}"
+# Get base clone path (required — the user's choice, no default)
+print_info "Product repos will be cloned under a base directory of your choice (any directory you own; it does not need to exist yet)."
+while true; do
+    read -p "$(echo -e "${BLUE}Base clone path (required, e.g. ~/my-projects): ${NC}")" CLONE_BASE
+    [ -n "$CLONE_BASE" ] && break
+    print_warning "Base clone path is required — please enter a directory."
+done
 CLONE_BASE="${CLONE_BASE/#\~/$HOME}"
 
 # Ask which repos to create

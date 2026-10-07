@@ -28,14 +28,14 @@ project-setup scripts globally so `setup-omni` (bash) and `setup-omni.fish`
 work from any directory:
 
 ```bash
-# Bash/Zsh
-git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
-cd ~/workspace/roger-projects/omni-agent-builder
+# Bash/Zsh — clone to any directory you like; the path below is just an example
+git clone <repo-url> ~/omni-agent-builder
+cd ~/omni-agent-builder
 ./scripts/install.sh
 
-# Fish
-git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
-cd ~/workspace/roger-projects/omni-agent-builder
+# Fish — same, the path is an example
+git clone <repo-url> ~/omni-agent-builder
+cd ~/omni-agent-builder
 ./scripts/install.fish
 ```
 
@@ -58,7 +58,8 @@ setup-omni.fish       # fish
 ```
 
 The setup script asks for the project name, GitHub org (placeholder allowed),
-base clone path, and which repos to register, then generates the minimal Omni
+a **required** base clone path (any directory you choose — no default), and
+which repos to register, then generates the minimal Omni
 structure:
 
 ```text
@@ -73,7 +74,7 @@ my-project/
 
 - OpenCode-native first: use agents, skills, permissions, commands, providers, and MCP before custom plugins.
 - Repositories are user-created only; agents must never create GitHub repositories.
-- Registered product repos are cloned under `~/workspace/roger-projects/<repo>`.
+- Registered product repos are cloned under the clone base path you choose (configured in `.omni/orchestrator.config.json`).
 - GitHub API operations use `GITHUB_TOKEN` only.
 - SSH keys are used for Git clone/fetch/push.
 - Secrets must be environment variables and must never be committed.
@@ -278,6 +279,7 @@ Craft and quality:
 - Skills path: `.opencode/skills`
 - Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
 - Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
+- External directory access: the example clone base path `~/omni-projects/**` is allowed; if you chose a different base directory, update this allow in `opencode.json` (otherwise agents will simply ask for permission each time)
 
 To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.
 
@@ -338,7 +340,7 @@ After creating or changing OpenCode config, agents, skills, or plugins, restart 
 2. User provides SSH URLs to the orchestrator.
 3. Copy `.omni/orchestrator.config.example.json` to `.omni/orchestrator.config.json`.
 4. Replace example repo URLs and paths.
-5. Product repositories are cloned under `~/workspace/roger-projects/<repo>`.
+5. Product repositories are cloned under the clone base path you chose (see `.omni/orchestrator.config.json`).
 6. Agents work only with registered repositories.
 
 Typical product repositories:

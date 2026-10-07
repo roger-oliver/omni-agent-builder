@@ -126,7 +126,7 @@ Create this manually in the repository root or merge it into your existing OpenC
     },
     "external_directory": {
       "*": "ask",
-      "~/workspace/roger-projects/**": "allow"
+      "~/omni-projects/**": "allow"
     }
   }
 }

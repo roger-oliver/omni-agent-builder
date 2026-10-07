@@ -59,14 +59,17 @@ echo -n (set_color blue)"GitHub org/username (or press Enter for placeholder): "
 read GITHUB_ORG
 test -z "$GITHUB_ORG"; and set GITHUB_ORG "YOUR_ORG"
 
-# Get base clone path
-echo -n (set_color blue)"Base clone path [~/workspace/roger-projects]: "(set_color normal)
-read CLONE_BASE
-if test -z "$CLONE_BASE"
-    set CLONE_BASE "$HOME/workspace/roger-projects"
-else
-    set CLONE_BASE (string replace '~' "$HOME" $CLONE_BASE)
+# Get base clone path (required — the user's choice, no default)
+print_info "Product repos will be cloned under a base directory of your choice (any directory you own; it does not need to exist yet)."
+while true
+    echo -n (set_color blue)"Base clone path (required, e.g. ~/my-projects): "(set_color normal)
+    read CLONE_BASE
+    if test -n "$CLONE_BASE"
+        break
+    end
+    print_warning "Base clone path is required — please enter a directory."
 end
+set CLONE_BASE (string replace '~' "$HOME" $CLONE_BASE)
 
 # Ask which repos to create
 print_header "Repository Selection"

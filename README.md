@@ -14,7 +14,7 @@ Implemented in this repo:
 - `.omni/orchestrator.config.json`: active repo registry for product repositories
 - `.omni/orchestrator.config.example.json`: example/template repo registry
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
-- Omni policies under `.omni/` (stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
+- Omni policies under `.omni/` (autonomy, stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
 - 39 OpenCode agent prompt files under `.opencode/agent/`
 - 19 reusable OpenCode skills under `.opencode/skills/`
@@ -28,14 +28,14 @@ project-setup scripts globally so `setup-omni` (bash) and `setup-omni.fish`
 work from any directory:
 
 ```bash
-# Bash/Zsh
-git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
-cd ~/workspace/roger-projects/omni-agent-builder
+# Bash/Zsh — clone to any directory you like; the path below is just an example
+git clone <repo-url> ~/omni-agent-builder
+cd ~/omni-agent-builder
 ./scripts/install.sh
 
-# Fish
-git clone <repo-url> ~/workspace/roger-projects/omni-agent-builder
-cd ~/workspace/roger-projects/omni-agent-builder
+# Fish — same, the path is an example
+git clone <repo-url> ~/omni-agent-builder
+cd ~/omni-agent-builder
 ./scripts/install.fish
 ```
 
@@ -58,7 +58,8 @@ setup-omni.fish       # fish
 ```
 
 The setup script asks for the project name, GitHub org (placeholder allowed),
-base clone path, and which repos to register, then generates the minimal Omni
+a **required** base clone path (any directory you choose — no default), and
+which repos to register, then generates the minimal Omni
 structure:
 
 ```text
@@ -73,7 +74,7 @@ my-project/
 
 - OpenCode-native first: use agents, skills, permissions, commands, providers, and MCP before custom plugins.
 - Repositories are user-created only; agents must never create GitHub repositories.
-- Registered product repos are cloned under `~/workspace/roger-projects/<repo>`.
+- Registered product repos are cloned under the clone base path you choose (configured in `.omni/orchestrator.config.json`).
 - GitHub API operations use `GITHUB_TOKEN` only.
 - SSH keys are used for Git clone/fetch/push.
 - Secrets must be environment variables and must never be committed.
@@ -96,7 +97,8 @@ my-project/
 │   ├── install.fish                   # Global installer (fish)
 │   ├── setup-omni-project.sh          # Interactive project setup (bash)
 │   ├── setup-omni-project.fish        # Interactive project setup (fish)
-│   └── apply-repo-security.sh         # Branch protection + repo hardening
+│   ├── apply-repo-security.sh         # Branch protection + repo hardening
+│   └── check-permissions.py           # Autonomy permission map validator (CI)
 ├── SECURITY.md                        # Vulnerability reporting + contribution rules
 ├── .github/
 │   ├── workflows/validate.yml         # PR CI gate (structure + secret scan)
@@ -113,6 +115,7 @@ my-project/
 │   ├── orchestrator.config.example.json  # Example/template repo registry
 │   ├── repo-registry.schema.json
 │   ├── agent-operating-contract.md
+│   ├── autonomy-policy.md
 │   ├── model-allocation-policy.md
 │   ├── stack-policy.md
 │   ├── dependency-selection-policy.md
@@ -277,7 +280,8 @@ Craft and quality:
 - Small model: `opencode/deepseek-v4.1-flash`
 - Skills path: `.opencode/skills`
 - Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
-- Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
+- Security permissions: three-tier bash model per `.omni/autonomy-policy.md` — `allow` (checks/reads/commits/feature-branch pushes run silently), `ask` (rm/mv/curl/merges/config changes stop for approval), `deny` (force-push, `rm -rf`, repo create/delete, sudo — never); allow read/glob/grep; ask for edit/webfetch
+- External directory access: the example clone base path `~/omni-projects/**` is allowed; if you chose a different base directory, update this allow in `opencode.json` (otherwise agents will simply ask for permission each time)
 
 To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.
 
@@ -338,7 +342,7 @@ After creating or changing OpenCode config, agents, skills, or plugins, restart 
 2. User provides SSH URLs to the orchestrator.
 3. Copy `.omni/orchestrator.config.example.json` to `.omni/orchestrator.config.json`.
 4. Replace example repo URLs and paths.
-5. Product repositories are cloned under `~/workspace/roger-projects/<repo>`.
+5. Product repositories are cloned under the clone base path you chose (see `.omni/orchestrator.config.json`).
 6. Agents work only with registered repositories.
 
 Typical product repositories:
@@ -359,7 +363,7 @@ a security boundary. Current protections:
 | Contribution path | Fork + pull request only. Branch protection on `main` and `develop` requires 1 approving review, `CODEOWNERS` approval, and a passing `omni-validate` status check. Direct pushes are blocked for everyone except the owner (`enforce_admins: false`). |
 | Merge policy | Merge commits only. Squash and rebase merges are disabled repo-wide (see `.omni/github-policy.md`). |
 | History safety | Force-push and branch deletion blocked on protected branches. Conversation resolution required before merge. |
-| CI gate | `.github/workflows/validate.yml`: JSON validity, agent structure, skill frontmatter, deterministic secret-pattern scan. |
+| CI gate | `.github/workflows/validate.yml`: JSON validity, agent structure, skill frontmatter, permission-map check, deterministic secret-pattern scan. |
 | Secrets | `.gitignore` blocks `.env`, keys, and credential files. CI fails on committed secret patterns. Env var **names** only (`.omni/agent-operating-contract.md`). |
 | Vulnerability intake | `SECURITY.md` + private vulnerability reporting. Blank issues disabled; structured bug/feature templates route security reports away from the public issue tracker. |
 | Dependency updates | Dependabot for GitHub Actions (weekly). |
@@ -423,6 +427,7 @@ python3 -m json.tool .omni/orchestrator.config.json >/dev/null
 python3 -m json.tool .omni/orchestrator.config.example.json >/dev/null
 python3 -m json.tool .omni/repo-registry.schema.json >/dev/null
 git diff --check
+python3 scripts/check-permissions.py        # autonomy permission map + mirrors
 ./scripts/apply-repo-security.sh --check   # remote protection state
 ```
 

@@ -3,6 +3,66 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## v0.2.0 — 2026-10-18
+
+Portability cleanup and orchestrator autonomy.
+
+### Added
+- **Orchestrator autonomy** — three-tier bash permission model
+  (`allow`/`ask`/`deny`) per `.omni/autonomy-policy.md`: safe checks, git
+  reads, commits and feature-branch pushes run silently; consequential
+  commands stop for approval; dangerous commands (force-push, `rm -rf`,
+  repo create/delete, sudo…) are blocked. Verified against OpenCode's own
+  resolver in both repo and global-only environments.
+- **Activity journal** — append-only
+  `decision_logs/docs/traceability/activity-log.md` records every
+  autonomous work session (format defined in the autonomy policy); the
+  logging duty is part of the operating contract. ADR requirements
+  unchanged and never waived by autonomy.
+- `scripts/check-permissions.py` — validates the 101-rule permission map
+  and its mirrors (32-command resolution matrix); runs in CI.
+
+### Changed
+- **All personal path references removed** (issue #5): docs, templates,
+  and configs now use a neutral, user-choosable clone base directory;
+  `setup-omni` scripts (bash + fish) require an explicit base path
+  (no default) and explain that any directory can be chosen.
+- CI: `actions/checkout` bumped 4 → 7 (Dependabot, PR #6).
+- Permission docs corrected to "last matching rule wins" semantics
+  (README, manual, vocabulary).
+
+### Notes
+- No breaking changes for product repos: the clone base path is read from
+  `.omni/orchestrator.config.json`; existing registered configs keep
+  working.
+
+## v0.1.1 — 2026-10-05
+
+Model-allocation fix and repository hardening.
+
+### Fixed
+- **DeepSeek V4 Flash is deprecated/retired** — all T3 Operator traffic
+  (`omni-orchestrator`, `codebase-explorer`, `traceability-keeper`,
+  `github-operator`, and `small_model`) now routes to
+  `opencode/deepseek-v4.1-flash`. New users hitting the dead endpoint no
+  longer waste time debugging. Closes #3.
+- `omni-validate` CI allowlist updated to the new model ID (the workflow
+  gate initially rejected the correctly-swapped agents).
+
+### Security
+- Exposure/secret audit across tracked files, full git history, and
+  configs: zero secret values found. GitHub secret scanning + push
+  protection + Dependabot security updates enabled.
+- Branch protection on `main`/`develop`: PRs required, CODEOWNERS review,
+  `omni-validate` required check; force-push and branch deletion blocked;
+  private vulnerability reporting enabled.
+- Personal email addresses scrubbed from all commit metadata
+  (GitHub noreply now, attribution preserved) and from commit
+  messages/file content (redaction labels). Pre-rewrite history kept in a
+  private notes repository.
+- Internal design transcript (`all-history-conversation.md`) erased from
+  history; preserved in the private notes repository.
+
 ## v0.1.0 — 2026-09-28
 
 First public release of the Omni agent system.
@@ -58,30 +118,3 @@ First public release of the Omni agent system.
 - `docs/vocabulary.md` (shared jargon glossary).
 - `docs/agent-skill-audit-2026-09-28.md` (full audit tracking).
 - Refreshed `README.md`, `blueprint.md`, `manual-opencode-setup.md`.
-
-## v0.1.1 — 2026-10-05
-
-Model-allocation fix and repository hardening.
-
-### Fixed
-- **DeepSeek V4 Flash is deprecated/retired** — all T3 Operator traffic
-  (`omni-orchestrator`, `codebase-explorer`, `traceability-keeper`,
-  `github-operator`, and `small_model`) now routes to
-  `opencode/deepseek-v4.1-flash`. New users hitting the dead endpoint no
-  longer waste time debugging. Closes #3.
-- `omni-validate` CI allowlist updated to the new model ID (the workflow
-  gate initially rejected the correctly-swapped agents).
-
-### Security
-- Exposure/secret audit across tracked files, full git history, and
-  configs: zero secret values found. GitHub secret scanning + push
-  protection + Dependabot security updates enabled.
-- Branch protection on `main`/`develop`: PRs required, CODEOWNERS review,
-  `omni-validate` required check; force-push and branch deletion blocked;
-  private vulnerability reporting enabled.
-- Personal email addresses scrubbed from all commit metadata
-  (GitHub noreply now, attribution preserved) and from commit
-  messages/file content (redaction labels). Pre-rewrite history kept in a
-  private notes repository.
-- Internal design transcript (`all-history-conversation.md`) erased from
-  history; preserved in the private notes repository.

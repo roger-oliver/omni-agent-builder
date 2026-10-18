@@ -14,7 +14,7 @@
 
 ## Allowed Operations After Registration
 
-- Clone registered SSH URLs under `~/workspace/roger-projects/<repo>`.
+- Clone registered SSH URLs under the configured clone base path (see `.omni/orchestrator.config.json`).
 - Create feature branches from `develop`.
 - Commit and push feature branches.
 - Open PRs to `develop`.

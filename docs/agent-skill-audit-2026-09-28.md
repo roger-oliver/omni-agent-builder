@@ -290,7 +290,7 @@ GitHub Support. Clones made before the rewrite retain old history.
 User decision (supersedes DEF-006 "accepted"): `all-history-conversation.md`
 (126KB DeepSeek design transcript) erased from **every commit** of the public
 repo via tree-filter, plus its README layout line. Preserved in a **private,
-versioned notes repository** at `~/workspace/roger-projects/omni-agent-builder-notes/`
+versioned notes repository** (private; location not published)
 together with `backups/pre-email-scrub.bundle` (full pre-scrub history).
 That notes repo must never be made public (its README warns accordingly).
 
@@ -298,3 +298,60 @@ Same force-push/re-lock dance as §15; `v0.1.0` tag re-pointed again. Verified:
 0 commits contain the file; 0 README mentions; emails still noreply-only.
 Residual exposure unchanged from §15 (unreachable SHAs served until GitHub GC
 — support purge request pending user action).
+
+## 17. Personal path references removed (2026-10-07)
+
+User request: remove personal-computer references (the author's local
+workspace path) from the public repo; scripts must inform and require the user
+to choose their own base directory.
+
+Changes:
+- `setup-omni-project.{sh,fish}`: base clone path is now **required** — info line
+  explains the directory is the user's choice, empty input re-prompts, no default.
+- All templates/configs/docs: personal path → neutral example
+  `~/omni-projects` (`.omni/orchestrator.config{,.example}.json`, `opencode.json`
+  permission, `blueprint.md`, `manual-opencode-setup.md`, README).
+- README install example keeps a path but is explicitly labeled as an example;
+  install/paths are user-choosable.
+- Policy/docs now point to the configured clone base path instead of a literal:
+  `.omni/github-policy.md`, `docs/vocabulary.md`, README principles/onboarding.
+- Notes-repo path redacted in §16 (location not published).
+- Global sync: `~/.config/opencode/setup-omni-project.{sh,fish}`,
+  `instructions/github-policy.md`, `instructions/vocabulary.md`, and the global
+  `opencode.jsonc` permission path.
+
+Keep-list (not personal-computer refs): `@roger-oliver` GitHub handle
+(CODEOWNERS, issue-template URLs), repo URLs, and `apply-repo-security.sh`
+owner/repo defaults (env-overridable).
+
+## 18. Orchestrator autonomy: three-tier permission model (2026-10-07)
+
+User request: make the orchestrator stop only on real dangerous commands —
+safe checks/git reads run silently, but autonomous actions must stay logged
+(decision-log history).
+
+Design (user decisions: orchestrator-only scope; silent feature-branch
+pushes; adopt the journal):
+- New `.omni/autonomy-policy.md`: `allow` / `ask` / `deny` tiers, deny list,
+  pattern semantics (last matching rule wins), logging duties, limitations.
+- Command map (101 rules) applied in FOUR synchronized places:
+  `opencode.json`, global `opencode.jsonc`, `omni-orchestrator.md`
+  frontmatter, `manual-opencode-setup.md` example.
+- `allow`: git reads (status/log/diff/show/fetch/ls-remote/…), checks
+  (`json.tool`, `bash -n`), local-safe (`ls/cat/grep/mkdir`), reversible
+  mutations (`git add/commit/switch`), `git push origin feature/*`.
+- `ask`: rm/mv/cp, curl/wget, merges/rebases/checkouts, non-feature pushes,
+  config changes, package managers.
+- `deny`: force-push (all forms), `rm -rf`, repo create/delete/edit, remote
+  add/remove, `git init`, `sudo`, `chown`, disk/system commands.
+- New `scripts/check-permissions.py`: simulates last-match-wins over a
+  32-command matrix + verifies the four copies are in sync; added to CI.
+- Activity journal: append-only `decision_logs/docs/traceability/activity-log.md`
+  (format in the policy); logging duty added to the operating contract +
+  orchestrator duties. ADR requirements unchanged.
+- Verified against OpenCode's own resolver (`opencode agent list`):
+  10/10 sample commands resolve as designed; frontmatter map parsed.
+
+Deferred (phase 2): builders' role maps; `solution-architect` and
+`backend-rust-engineer` still use `bash: allow` (bypasses the deny list —
+flagged, not yet migrated per orchestrator-only scope).

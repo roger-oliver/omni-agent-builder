@@ -14,6 +14,9 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 | **Handoff packet** | Structured task brief passed between agents: Goal, Requirement IDs, Context, Constraints, Done-when, Verification command |
 | **Phase gate (G1–G12)** | Ordered SDLC checkpoints in `sdlc-handoffs`; a gate closes only when its artifact + ADRs exist |
 | **Delegation map** | Orchestrator's table: phase → lead agents |
+| **Autonomy tiers** | `allow` (silent) / `ask` (stop) / `deny` (never) command classification per `.omni/autonomy-policy.md` |
+| **Activity journal** | Append-only session history in the decision repo: `docs/traceability/activity-log.md` |
+| **Deny list** | Commands no agent may run without a human (force-push, `rm -rf`, repo create/delete, sudo…) |
 | **Builder** | Implementation agents (`backend-*`, `frontend-*`, `data-migration-engineer`, `e2e-test-engineer`) |
 | **Thinker / Builder / Operator** | Model tiers T1/T2/T3 (see "Model terms") |
 
@@ -23,7 +26,7 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 |---|---|
 | **decision_logs repo** | The product's control repository: requirements, ADRs, RTM, QA reports, release notes |
 | **Registered repo** | A repo listed in `.omni/orchestrator.config.json` (`decision_logs`, `ui_design`, `frontend`, `backend`, `legacy`) — the only repos agents may touch |
-| **Clone base path** | `~/workspace/roger-projects` — where registered repos live locally |
+| **Clone base path** | User-chosen directory where registered repos are cloned (configured per project in `.omni/orchestrator.config.json`) |
 | **develop / release/* / main** | Branch model: `feature/*` → `develop` → `release/<version>` → `main` |
 | **Merge commit** | The **only** allowed PR merge method (history preserved; no squash, no rebase-merge, no force-push) |
 | **PR loop** | pr-validator ↔ builder fix cycle; **max 3 loops**, then human escalation |

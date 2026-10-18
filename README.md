@@ -14,7 +14,7 @@ Implemented in this repo:
 - `.omni/orchestrator.config.json`: active repo registry for product repositories
 - `.omni/orchestrator.config.example.json`: example/template repo registry
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
-- Omni policies under `.omni/` (stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
+- Omni policies under `.omni/` (autonomy, stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
 - 39 OpenCode agent prompt files under `.opencode/agent/`
 - 19 reusable OpenCode skills under `.opencode/skills/`
@@ -97,7 +97,8 @@ my-project/
 │   ├── install.fish                   # Global installer (fish)
 │   ├── setup-omni-project.sh          # Interactive project setup (bash)
 │   ├── setup-omni-project.fish        # Interactive project setup (fish)
-│   └── apply-repo-security.sh         # Branch protection + repo hardening
+│   ├── apply-repo-security.sh         # Branch protection + repo hardening
+│   └── check-permissions.py           # Autonomy permission map validator (CI)
 ├── SECURITY.md                        # Vulnerability reporting + contribution rules
 ├── .github/
 │   ├── workflows/validate.yml         # PR CI gate (structure + secret scan)
@@ -114,6 +115,7 @@ my-project/
 │   ├── orchestrator.config.example.json  # Example/template repo registry
 │   ├── repo-registry.schema.json
 │   ├── agent-operating-contract.md
+│   ├── autonomy-policy.md
 │   ├── model-allocation-policy.md
 │   ├── stack-policy.md
 │   ├── dependency-selection-policy.md
@@ -361,7 +363,7 @@ a security boundary. Current protections:
 | Contribution path | Fork + pull request only. Branch protection on `main` and `develop` requires 1 approving review, `CODEOWNERS` approval, and a passing `omni-validate` status check. Direct pushes are blocked for everyone except the owner (`enforce_admins: false`). |
 | Merge policy | Merge commits only. Squash and rebase merges are disabled repo-wide (see `.omni/github-policy.md`). |
 | History safety | Force-push and branch deletion blocked on protected branches. Conversation resolution required before merge. |
-| CI gate | `.github/workflows/validate.yml`: JSON validity, agent structure, skill frontmatter, deterministic secret-pattern scan. |
+| CI gate | `.github/workflows/validate.yml`: JSON validity, agent structure, skill frontmatter, permission-map check, deterministic secret-pattern scan. |
 | Secrets | `.gitignore` blocks `.env`, keys, and credential files. CI fails on committed secret patterns. Env var **names** only (`.omni/agent-operating-contract.md`). |
 | Vulnerability intake | `SECURITY.md` + private vulnerability reporting. Blank issues disabled; structured bug/feature templates route security reports away from the public issue tracker. |
 | Dependency updates | Dependabot for GitHub Actions (weekly). |
@@ -425,6 +427,7 @@ python3 -m json.tool .omni/orchestrator.config.json >/dev/null
 python3 -m json.tool .omni/orchestrator.config.example.json >/dev/null
 python3 -m json.tool .omni/repo-registry.schema.json >/dev/null
 git diff --check
+python3 scripts/check-permissions.py        # autonomy permission map + mirrors
 ./scripts/apply-repo-security.sh --check   # remote protection state
 ```
 

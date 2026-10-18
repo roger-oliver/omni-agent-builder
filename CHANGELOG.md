@@ -5,6 +5,12 @@ Entries cite PRs and ADRs where applicable.
 
 ## Unreleased
 
+- **Orchestrator autonomy**: three-tier bash permission model
+  (`allow`/`ask`/`deny`) per `.omni/autonomy-policy.md` — safe checks, git
+  reads, commits and feature-branch pushes run silently; dangerous commands
+  stop or are blocked. Activity journal added for autonomous-session history
+  (`docs/traceability/activity-log.md` in product decision repos).
+  `scripts/check-permissions.py` validates the map and its mirrors (CI).
 - **Portability cleanup**: removed all personal path references
   from docs, templates, and configs.
   `setup-omni` scripts now require an explicit base clone directory (no

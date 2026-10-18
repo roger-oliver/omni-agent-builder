@@ -278,7 +278,7 @@ Craft and quality:
 - Small model: `opencode/deepseek-v4.1-flash`
 - Skills path: `.opencode/skills`
 - Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
-- Security permissions: deny force-push, repo creation, `rm -rf`; allow read/glob/grep; ask for edit/bash/webfetch
+- Security permissions: three-tier bash model per `.omni/autonomy-policy.md` — `allow` (checks/reads/commits/feature-branch pushes run silently), `ask` (rm/mv/curl/merges/config changes stop for approval), `deny` (force-push, `rm -rf`, repo create/delete, sudo — never); allow read/glob/grep; ask for edit/webfetch
 - External directory access: the example clone base path `~/omni-projects/**` is allowed; if you chose a different base directory, update this allow in `opencode.json` (otherwise agents will simply ask for permission each time)
 
 To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.

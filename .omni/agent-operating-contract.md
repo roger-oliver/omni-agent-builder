@@ -44,6 +44,11 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Record significant decisions as ADR-ready notes.
 - If verification cannot be run, state exactly why and provide the exact command the user or next agent should run.
 
+## Autonomy & Logging
+
+- Operate under `.omni/autonomy-policy.md`: the `allow` tier runs silently, the `ask` tier stops for human approval, and the `deny` tier is forbidden for every agent — escalate to the human instead.
+- Autonomy never waives decision-log duties: ADRs remain required for the cases in `.omni/decision-log-policy.md`, and the orchestrator records every autonomous work session in the product's activity journal (`docs/traceability/activity-log.md` in the decision repo).
+
 ## Required Response Shape
 
 For any non-trivial task, produce a response with these sections unless the orchestrator requested a specific artifact format:

@@ -14,6 +14,9 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 | **Handoff packet** | Structured task brief passed between agents: Goal, Requirement IDs, Context, Constraints, Done-when, Verification command |
 | **Phase gate (G1–G12)** | Ordered SDLC checkpoints in `sdlc-handoffs`; a gate closes only when its artifact + ADRs exist |
 | **Delegation map** | Orchestrator's table: phase → lead agents |
+| **Autonomy tiers** | `allow` (silent) / `ask` (stop) / `deny` (never) command classification per `.omni/autonomy-policy.md` |
+| **Activity journal** | Append-only session history in the decision repo: `docs/traceability/activity-log.md` |
+| **Deny list** | Commands no agent may run without a human (force-push, `rm -rf`, repo create/delete, sudo…) |
 | **Builder** | Implementation agents (`backend-*`, `frontend-*`, `data-migration-engineer`, `e2e-test-engineer`) |
 | **Thinker / Builder / Operator** | Model tiers T1/T2/T3 (see "Model terms") |
 

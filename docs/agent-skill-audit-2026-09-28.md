@@ -323,3 +323,35 @@ Changes:
 Keep-list (not personal-computer refs): `@roger-oliver` GitHub handle
 (CODEOWNERS, issue-template URLs), repo URLs, and `apply-repo-security.sh`
 owner/repo defaults (env-overridable).
+
+## 18. Orchestrator autonomy: three-tier permission model (2026-10-07)
+
+User request: make the orchestrator stop only on real dangerous commands —
+safe checks/git reads run silently, but autonomous actions must stay logged
+(decision-log history).
+
+Design (user decisions: orchestrator-only scope; silent feature-branch
+pushes; adopt the journal):
+- New `.omni/autonomy-policy.md`: `allow` / `ask` / `deny` tiers, deny list,
+  pattern semantics (last matching rule wins), logging duties, limitations.
+- Command map (101 rules) applied in FOUR synchronized places:
+  `opencode.json`, global `opencode.jsonc`, `omni-orchestrator.md`
+  frontmatter, `manual-opencode-setup.md` example.
+- `allow`: git reads (status/log/diff/show/fetch/ls-remote/…), checks
+  (`json.tool`, `bash -n`), local-safe (`ls/cat/grep/mkdir`), reversible
+  mutations (`git add/commit/switch`), `git push origin feature/*`.
+- `ask`: rm/mv/cp, curl/wget, merges/rebases/checkouts, non-feature pushes,
+  config changes, package managers.
+- `deny`: force-push (all forms), `rm -rf`, repo create/delete/edit, remote
+  add/remove, `git init`, `sudo`, `chown`, disk/system commands.
+- New `scripts/check-permissions.py`: simulates last-match-wins over a
+  32-command matrix + verifies the four copies are in sync; added to CI.
+- Activity journal: append-only `decision_logs/docs/traceability/activity-log.md`
+  (format in the policy); logging duty added to the operating contract +
+  orchestrator duties. ADR requirements unchanged.
+- Verified against OpenCode's own resolver (`opencode agent list`):
+  10/10 sample commands resolve as designed; frontmatter map parsed.
+
+Deferred (phase 2): builders' role maps; `solution-architect` and
+`backend-rust-engineer` still use `bash: allow` (bypasses the deny list —
+flagged, not yet migrated per orchestrator-only scope).

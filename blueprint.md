@@ -747,3 +747,6 @@ When implementing this blueprint:
 7. Ask before adding optional plugins.
 8. Prefer many small, focused agent files over one large prompt.
 9. After changing OpenCode config, agent files, skills, or plugins, remind the user to restart OpenCode because config is loaded at startup.
+
+## Repo sync guard (mandatory)
+Every agent: never commit or push to `develop`/`main`; work in a worktree from `origin/develop`; a local base branch must stay `0 0` vs origin; shared `.githooks/` enforce it (enable with `core.hooksPath=.githooks`). See `.omni/repo-sync-policy.md`.

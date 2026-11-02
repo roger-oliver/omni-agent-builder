@@ -1,5 +1,5 @@
 ---
-description: Owns releases: version bumps, release branches, changelog aggregation, release notes, and the human-approval handoff for main.
+description: "Owns releases: version bumps, release branches, changelog aggregation, release notes, and the human-approval handoff for main."
 mode: subagent
 model: mimo/mimo-v2.6-flash
 permission:

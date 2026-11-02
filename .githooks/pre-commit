@@ -1,0 +1,10 @@
+#!/bin/sh
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+case "$branch" in
+  develop|main|master)
+    echo "BLOCKED: refusing to commit directly to '$branch'."
+    echo "Create a worktree from origin/develop on a feature/docs branch, commit there, then open a PR."
+    echo "  git worktree add ../.worktrees/<name> -b <type>/<slug> origin/develop"
+    exit 1;;
+esac
+exit 0

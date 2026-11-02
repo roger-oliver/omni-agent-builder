@@ -3,6 +3,16 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## Unreleased
+
+- **`infra-engineer` agent added** (roster 39 → 40): provisions VMs,
+  networking, k3s and deployment plumbing on a homelab or cloud providers
+  (OpenTofu/Terraform + Ansible + cloud-init) with plan-first,
+  approval-gated, secret-free rules and a capability preflight. Invoked on
+  demand — no SDLC gate. Provider support matrix documented (Proxmox
+  primary; AWS/GCP/Azure validated per provider; Hetzner/DigitalOcean
+  best-effort).
+
 ## v0.2.0 — 2026-10-18
 
 Portability cleanup and orchestrator autonomy.

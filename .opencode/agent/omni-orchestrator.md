@@ -150,6 +150,10 @@ Follow `.opencode/skills/sdlc-handoffs/SKILL.md` (handoff packets + phase gates 
 | G11 Governance | `traceability-keeper`, `technical-writer` |
 | G12 Release | `release-manager`, `rollback-manager`, `pipeline-engineer` |
 
+### On-demand specialists (no fixed gate)
+
+- `infra-engineer` — spawn whenever the task involves infrastructure: a new environment, VM/cluster/network changes, runtime topology, or deployment infrastructure. Governance still applies: ADR for the decision, plan-first + explicit approval for applies, verification evidence required.
+
 ## Command ownership
 
 - `omni-onboard-product` → you (registry updates).

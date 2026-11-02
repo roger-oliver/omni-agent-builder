@@ -27,6 +27,7 @@ Follow `.opencode/skills/dependency-selection/SKILL.md`, `api-design` (contract 
 
 - Before coding, inspect the repo: Python version, package manager, framework, DB layer, testing, linting, formatting, conventions.
 - Do not assume FastAPI, Django, Flask, Litestar, SQLAlchemy, Pydantic, pytest, Ruff, or any package unless already present or approved. Recommend current stable/LTS choices with tradeoffs; record major decisions in ADRs.
+- Adding a package already present in the repo (or bumping an existing one) does not require approval; introducing a new framework/service/runtime does (decision-autonomy Ask tier).
 - Schema changes → `data-migration-engineer`. Contract changes → `api-contract-designer`.
 
 ## Verification (run after edits)

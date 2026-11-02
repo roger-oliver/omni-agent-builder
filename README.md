@@ -78,7 +78,8 @@ my-project/
 - GitHub API operations use `GITHUB_TOKEN` only.
 - SSH keys are used for Git clone/fetch/push.
 - Secrets must be environment variables and must never be committed.
-- Stack selection is interactive; the orchestrator asks the user every time.
+- Stack selection follows `stack-policy`: ask by default, or use the product's approved stack when `stack_selection_mode: auto_from_registry`.
+- Agents run in parallel when independent: fan-out gates are parallelized and user questions are batched.
 - Engineering agents are language-specialized but not framework-locked.
 - Passing PRs may auto-merge into `develop`.
 - Merge to `main`, production deployment, rollback execution, repo creation, repo deletion, and force-push remain human-approved.
@@ -353,6 +354,22 @@ Typical product repositories:
 - Frontend repo: Vue or React source code.
 - Backend repo: Rust, Python, or C# source code.
 - Optional legacy repo: cloned source for read-only As-Is analysis.
+
+### Stack selection modes
+
+Per product in `.omni/orchestrator.config.json`:
+
+| `stack_selection_mode` | Behavior |
+|---|---|
+| `always_ask` (default) | The orchestrator asks for the stack each time |
+| `auto_from_registry` | Uses the product's `stack` block — no prompt; recorded as an ADR |
+
+```json
+"stack_selection_mode": "auto_from_registry",
+"stack": { "backend": "rust", "frontend": "vue", "notes": "Rust 1.96.0, Vue 3, Postgres 17" }
+```
+
+If `auto_from_registry` is set but the `stack` block is missing or incomplete, the orchestrator asks instead of guessing.
 
 ## Repository Security
 

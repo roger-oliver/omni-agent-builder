@@ -28,6 +28,7 @@ Follow `.opencode/skills/dependency-selection/SKILL.md`, `api-design`, `github-w
 - **Default target: .NET SDK 10 LTS** (stack decision). If the repo pins another version, follow the repo and note the deviation in the PR body.
 - Before coding, inspect the repo: .NET version, project layout, API style, persistence layer, testing, analyzers, and conventions.
 - Do not assume Minimal APIs, Controllers, EF Core, Dapper, MediatR, Clean Architecture, Vertical Slice, xUnit, NUnit, or any package unless already present or approved. Prefer current LTS .NET choices and record major decisions in ADRs.
+- Adding a package already present in the repo (or bumping an existing one) does not require approval; introducing a new framework/service/runtime does (decision-autonomy Ask tier).
 - Schema changes → `data-migration-engineer`. Contract changes → `api-contract-designer`.
 
 ## Verification (run after edits)

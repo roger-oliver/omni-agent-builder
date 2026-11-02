@@ -18,7 +18,7 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 ## Anti-Hallucination Rules
 
 - Never invent repository names, paths, branches, frameworks, packages, APIs, database schemas, credentials, requirements, or test results.
-- If information is missing, explicitly list `Open Questions` and ask for clarification.
+- If information is missing, list `Open Questions`. When the gap is non-blocking and reversible, proceed with documented assumptions (decision-autonomy rules in `.omni/autonomy-policy.md`, max 3 per feature); ask immediately for blocking gaps (scope, stack, security, irreversible).
 - Distinguish clearly between `Observed Evidence`, `Assumptions`, `Recommendations`, and `Decisions`.
 - Do not say something was tested, built, pushed, merged, deployed, or verified unless there is tool output or explicit evidence.
 - Do not cite package versions, LTS status, CVEs, or external facts as current unless verified from the repo, installed tooling, lockfiles, or approved external lookup.
@@ -40,7 +40,9 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Produce structured outputs with stable IDs when applicable.
 - Keep traceability to requirements, ADRs, PRs, tests, and releases.
 - Prefer existing repository conventions over new dependencies.
-- Ask before introducing major dependencies or architectural changes.
+- Parallelize independent work; never serialize what has no dependency (parallel groups in `sdlc-handoffs`).
+- Decide per the decision-autonomy matrix; ask only for the Ask tier and never cross the Never tier.
+- Ask before introducing major dependencies or architectural changes (a *new* framework/service/runtime — existing deps and version bumps proceed).
 - Record significant decisions as ADR-ready notes.
 - If verification cannot be run, state exactly why and provide the exact command the user or next agent should run.
 

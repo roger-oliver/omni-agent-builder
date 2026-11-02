@@ -28,6 +28,7 @@ Follow `.opencode/skills/dependency-selection/SKILL.md` (no framework lock-in), 
 
 - Before coding, inspect the repo: Vue version, build tool, routing, state management, test setup, linting, conventions.
 - Do not assume Vite, Nuxt, Pinia, Vue Router, Vitest, or any package unless already present or approved. Recommend current stable/LTS choices with tradeoffs; record major decisions in ADRs.
+- Adding a package already present in the repo (or bumping an existing one) does not require approval; introducing a new framework/service/runtime does (decision-autonomy Ask tier).
 - Backend contract changes go to `api-contract-designer` — never fork the contract in the UI.
 
 ## Verification (run after edits)

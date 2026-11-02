@@ -1,6 +1,6 @@
 # Omni-Agent-Builder
 
-**An OpenCode-based software factory: 39 specialized AI agents, 19 reusable skills, and enforceable SDLC policies that orchestrate the full product lifecycle — business context, requirements, architecture, data/API design, UI/UX, implementation (Rust/Python/C#/Vue/React), testing, security, observability, releases, and legacy reverse-engineering — across user-registered GitHub repositories, with human-approval gates and decision-log discipline built in.**
+**An OpenCode-based software factory: 40 specialized AI agents, 19 reusable skills, and enforceable SDLC policies that orchestrate the full product lifecycle — business context, requirements, architecture, data/API design, UI/UX, implementation (Rust/Python/C#/Vue/React), testing, security, observability, releases, and legacy reverse-engineering — across user-registered GitHub repositories, with human-approval gates and decision-log discipline built in.**
 
 Omni-Agent-Builder is a meta-project: it configures the agent system only. It must not contain generated product frontend code, backend code, UI assets, legacy source code, or product decision logs. Product work happens in separate private GitHub repositories created by the user and registered with the orchestrator.
 
@@ -16,7 +16,7 @@ Implemented in this repo:
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
 - Omni policies under `.omni/` (autonomy, stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 39 OpenCode agent prompt files under `.opencode/agent/`
+- 40 OpenCode agent prompt files under `.opencode/agent/`
 - 19 reusable OpenCode skills under `.opencode/skills/`
 - Global setup scripts under `scripts/` (installer + interactive project setup for bash and fish)
 - `docs/vocabulary.md` (shared jargon glossary) and `docs/agent-skill-audit-2026-09-28.md` (revision tracking)
@@ -78,7 +78,8 @@ my-project/
 - GitHub API operations use `GITHUB_TOKEN` only.
 - SSH keys are used for Git clone/fetch/push.
 - Secrets must be environment variables and must never be committed.
-- Stack selection is interactive; the orchestrator asks the user every time.
+- Stack selection follows `stack-policy`: ask by default, or use the product's approved stack when `stack_selection_mode: auto_from_registry`.
+- Agents run in parallel when independent: fan-out gates are parallelized and user questions are batched.
 - Engineering agents are language-specialized but not framework-locked.
 - Passing PRs may auto-merge into `develop`.
 - Merge to `main`, production deployment, rollback execution, repo creation, repo deletion, and force-push remain human-approved.
@@ -124,7 +125,7 @@ my-project/
 │   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 39 agent prompt files
+    │   └── 40 agent prompt files
     └── skills/
         └── 19 reusable skill folders
 ```
@@ -226,6 +227,7 @@ QA and performance agents:
 DevOps, release, and observability agents:
 
 - `pipeline-engineer`
+- `infra-engineer`
 - `rollback-manager`
 - `release-manager`
 - `logging-strategist`
@@ -352,6 +354,22 @@ Typical product repositories:
 - Frontend repo: Vue or React source code.
 - Backend repo: Rust, Python, or C# source code.
 - Optional legacy repo: cloned source for read-only As-Is analysis.
+
+### Stack selection modes
+
+Per product in `.omni/orchestrator.config.json`:
+
+| `stack_selection_mode` | Behavior |
+|---|---|
+| `always_ask` (default) | The orchestrator asks for the stack each time |
+| `auto_from_registry` | Uses the product's `stack` block — no prompt; recorded as an ADR |
+
+```json
+"stack_selection_mode": "auto_from_registry",
+"stack": { "backend": "rust", "frontend": "vue", "notes": "Rust 1.96.0, Vue 3, Postgres 17" }
+```
+
+If `auto_from_registry` is set but the `stack` block is missing or incomplete, the orchestrator asks instead of guessing.
 
 ## Repository Security
 

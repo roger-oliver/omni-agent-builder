@@ -3,6 +3,44 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## v0.3.0 — 2026-11-02
+
+Infrastructure agent, parallel execution, and decision autonomy.
+
+### Added
+- **`infra-engineer` agent** (roster 39 → 40): provisions VMs, networking,
+  k3s and deployment plumbing on a homelab or cloud providers
+  (OpenTofu/Terraform + Ansible + cloud-init) with plan-first,
+  approval-gated, secret-free rules and a capability preflight. Invoked on
+  demand — no SDLC gate. Provider support matrix documented (Proxmox
+  primary; AWS/GCP/Azure validated per provider; Hetzner/DigitalOcean
+  best-effort).
+- **Parallel agent execution**: the orchestrator spawns independent agents
+  concurrently (parallel groups per gate, ≤5 at a time, one-writer-per-repo
+  rules, batched questions), documented in the orchestrator prompt and
+  `sdlc-handoffs`.
+- **Decision autonomy**: decide/ask/never matrix in `.omni/autonomy-policy.md`
+  — reversible choices proceed with logging (ADR + activity journal); an
+  assumption budget of 3 per feature; only blocking gaps are asked.
+- **Stack auto mode**: `stack_selection_mode: auto_from_registry` uses the
+  product's approved `stack` block (no prompt, ADR recorded); schema-enforced
+  and documented in README.
+
+### Changed
+- Builders run stages autonomously with per-stage reports; research is
+  autonomous; dependency approval is limited to new frameworks/services/
+  runtimes (existing deps and version bumps proceed).
+- `solution-architect` Phase 0 splits blocking vs non-blocking questions
+  (final blueprint approval retained).
+- `requirements-writer`: non-blocking gaps become documented assumptions.
+
+### Fixed
+- Quoted two agent descriptions containing colons (strict-YAML safe).
+
+### Repository
+- Repo-sync guard: `AGENTS.md`, `.githooks/pre-commit`, `.githooks/pre-push`,
+  `.omni/repo-sync-policy.md` — enforces the worktree → PR flow.
+
 ## v0.2.0 — 2026-10-18
 
 Portability cleanup and orchestrator autonomy.

@@ -1,0 +1,10 @@
+#!/bin/sh
+while read local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/develop|refs/heads/main|refs/heads/master)
+      echo "BLOCKED: refusing to push directly to '$remote_ref'."
+      echo "Push the feature/docs branch and open a PR to develop instead."
+      exit 1;;
+  esac
+done
+exit 0

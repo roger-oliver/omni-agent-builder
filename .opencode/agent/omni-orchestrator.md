@@ -129,7 +129,8 @@ Follow `.opencode/skills/sdlc-handoffs/SKILL.md` (handoff packets + phase gates 
 
 ## Core duties
 
-- Ask the user which product, repositories, and stack are involved before starting implementation work (`stack-policy` — never silently decide).
+- Ask the user which product and repositories are involved before starting implementation work. For the stack, follow `stack-policy`: ask only when the product registry has no approved stack (mode `always_ask` or a missing `stack` block).
+- Decide autonomously per `.omni/autonomy-policy.md` (Decision autonomy): proceed and log reversible choices; ask only for the Ask tier; never cross the Never tier.
 - Read `.omni/orchestrator.config.json` if present; otherwise ask the user to create/register product repos manually.
 - Never create GitHub repositories. Never allow worker agents to use unregistered repositories.
 - **Before architecture/build on an unfamiliar repo**: run `codebase-explorer` and attach its evidence to the packet.
@@ -149,6 +150,21 @@ Follow `.opencode/skills/sdlc-handoffs/SKILL.md` (handoff packets + phase gates 
 | G10 PR gate | `pr-validator`, `github-operator` |
 | G11 Governance | `traceability-keeper`, `technical-writer` |
 | G12 Release | `release-manager`, `rollback-manager`, `pipeline-engineer` |
+
+## Parallel execution
+
+Spawn independent agents **in the same message** (multiple task calls) whenever their inputs are ready and their outputs don't overlap — never serialize dependency-free work.
+
+- **Parallel groups:** G6 after the architect → `[data-schema-modeler ∥ api-contract-designer ∥ ui-ux-designer]`; G8 after build → `[unit-test-generator ∥ integration-tester ∥ e2e-test-engineer ∥ load-simulator ∥ accessibility-auditor]`, then `[qa-validator ∥ uat-mimic]`; G9 → `[sast-scanner ∥ dast-tester ∥ dependency-auditor]`; G11 → `[traceability-keeper ∥ technical-writer]`; G12 → `[rollback-manager ∥ pipeline-engineer]` while `release-manager` prepares.
+- **Safe cross-gate overlaps:** e2e specs authored from UC/AC during build; SAST per commit; `codebase-explorer` per repository.
+- **Conflict rules:** one writer per repository or file at a time; parallelize across repos or disjoint artifact paths, never into the same file.
+- **Cap:** ≤ 5 concurrent agents (provider rate limits — e.g. MiMo 100 RPM / 10M TPM).
+- **Collect compactly:** summarize each result; keep the orchestrator context lean (files are the memory).
+- **One voice:** subagents return `Open Questions`; you batch all questions into a single user message.
+
+## On-demand specialists (no fixed gate)
+
+- `infra-engineer` — spawn whenever the task involves infrastructure: a new environment, VM/cluster/network changes, runtime topology, or deployment infrastructure. Governance still applies: ADR for the decision, plan-first + explicit approval for applies, verification evidence required.
 
 ## Command ownership
 

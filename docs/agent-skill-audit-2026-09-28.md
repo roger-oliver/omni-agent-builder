@@ -355,3 +355,58 @@ pushes; adopt the journal):
 Deferred (phase 2): builders' role maps; `solution-architect` and
 `backend-rust-engineer` still use `bash: allow` (bypasses the deny list —
 flagged, not yet migrated per orchestrator-only scope).
+
+## 20. infra-engineer integrated (2026-11-01)
+
+User-created agent integrated into the project (roster 39 → 40).
+
+- Source: local `~/.config/opencode/agents/infra-engineer.md`; normalized to
+  repo conventions: operating-contract reference, `## Inputs` / `## Outputs` /
+  `## Boundaries` / `## Handoff` skeleton, `edit: ask`, deprecated `tools:` map
+  removed, model `mimo/mimo-v2.6-flash` (T2).
+- **Owner-specific "Default architecture" section removed** from the public
+  file (it described a private deployment topology). Platform specifics now
+  live in the designated infrastructure repo, which the agent reads as an
+  authoritative source.
+- No assistant-specific filename references; provider scope is generic: Proxmox homelab
+  (primary) + AWS/GCP/Azure (validated per provider) + Hetzner/DigitalOcean
+  (best-effort), with an honest provider-support matrix.
+- Added `## Capability & preflight` (tooling check, credential env-var names,
+  validation commands = the guarantee mechanism) — no blanket runtime
+  guarantee is claimed.
+- **No SDLC gate**: invoked on demand by the orchestrator whenever infra work
+  exists (new environment, VM/cluster/network changes, runtime topology,
+  deployment infrastructure).
+- Rosters/docs updated: README (40 agents), blueprint §8 (#40) + §17 count,
+  model-allocation T2 list, orchestrator on-demand specialists section.
+
+## 21. Parallel execution + decision autonomy (2026-11-02)
+
+User request: make agent work genuinely parallel where possible and stop
+asking for decisions the orchestrator can make itself.
+
+Parallelism (docs/instructions only — the runtime already supports concurrent
+task spawning):
+- Orchestrator: new "Parallel execution" section — same-message spawning,
+  parallel groups per gate (G6/G8/G9/G11/G12), safe cross-gate overlaps,
+  one-writer-per-repo rule, ≤5 concurrency cap, compact result collection,
+  batched questions (one voice).
+- `sdlc-handoffs`: new "Parallelism" section (spawnability check, groups,
+  conflict rules, anti-patterns); gate header now distinguishes ordered gates
+  from concurrent groups.
+
+Decision autonomy (user-approved boundary):
+- `.omni/autonomy-policy.md`: decide/ask/never matrix + assumption budget (3
+  per feature, logged) + one-voice rule.
+- Stack: `stack_selection_mode` gains `auto_from_registry` (schema
+  conditional requires the `stack` block; ADR recorded; falls back to asking
+  when incomplete). Documented in README + stack policy.
+- `solution-architect`: Phase 0 splits blocking vs non-blocking questions
+  (final blueprint approval retained per user decision).
+- `backend-rust-engineer`: stages run autonomously with reports; research
+  autonomous; dependency approval limited to new frameworks/services/runtimes
+  (crate rules kept). Other builders aligned.
+- `requirements-writer`: non-blocking gaps become documented assumptions.
+- Unchanged (human-only): merge to `main`, production deploy/rollback,
+  repo create/delete, force-push, secrets handling; pr-validator 3-loop cap;
+  infra apply approvals.

@@ -1,5 +1,5 @@
 ---
-description: Reviews data handling for privacy and regulatory compliance (GDPR-focused): lawful basis, consent, retention, minimization, and data-subject rights readiness.
+description: "Reviews data handling for privacy and regulatory compliance (GDPR-focused): lawful basis, consent, retention, minimization, and data-subject rights readiness."
 mode: subagent
 model: mimo/mimo-v2.6-pro
 permission:

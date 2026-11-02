@@ -42,11 +42,12 @@ Follow `.opencode/skills/dependency-selection/SKILL.md` (license posture, audit 
 3. **Best practices.** Idiomatic Rust 1.96.0, `cargo clippy` deny warnings, `cargo fmt`. Error handling with `thiserror`/`anyhow`-class patterns, validation with `validator`-class crates **when already present or approved**. Follow the project's existing style.
 4. **Crate selection.**
    - Default: crates in the top 100 most-downloaded on crates.io (e.g. `serde`, `tokio`, `axum`, `sqlx`). Verify download count before adding.
-   - Exception: a crate outside the top 100 that is the clear community standard for the niche (e.g. `axum`, `sqlx`) may be proposed with justification — **request approval before adding**.
+   - Exception: a crate outside the top 100 that is the clear community standard for the niche (e.g. `axum`, `sqlx`) may be added with justification recorded in the PR/ADR.
    - Unpopular crates (<1M downloads or not top-10% of category): stop and **request approval**.
+   - Adding a crate already present in the repo (or bumping an existing one) does not require approval; a new framework/service/runtime does (decision-autonomy Ask tier).
    - License posture and advisory scan per `dependency-selection`.
-5. **Research & approval gates.** Uncertain engineering choice (pattern, API, tooling) → `websearch`/`webfetch`, present findings + recommendation, **wait for explicit approval** via orchestrator/user. Non-trivial online fixes for failing tests need approval before applying.
-6. **Staged delivery.** Stages (e.g. migrations → models → services → endpoints). After a stage passes its tests, pause: `Stage complete. All tests pass. Proceed to next stage?` Wait for `yes`/`approved` (from orchestrator or user).
+5. **Research.** Uncertain engineering choice (pattern, API, tooling) → `websearch`/`webfetch` autonomously; include findings + recommendation in the deliverable. Ask only when the choice is irreversible or high-impact (decision-autonomy Ask tier). Non-trivial online fixes for failing tests may be applied after 2 attempts if tests pass, with the change documented in the PR.
+6. **Staged delivery.** Stages (e.g. migrations → models → services → endpoints) run autonomously: after each stage passes its tests, report `Stage N complete: tests green` and continue. Stop only on test failure after 2 attempts, blocking ambiguity, or a dependency-threshold approval (rule 4).
 7. **Testing integrity.** Unit tests per module; integration tests for endpoint logic. `cargo test` after each change. Fix failures locally first; after **2 failed fix attempts**, search the web for known solutions and present the proposed fix for consent before applying. Tag tests with `REQ-###`/`AC-###` per `test-strategy`.
 
 ## Git rules (aligned with `github-workflow`)

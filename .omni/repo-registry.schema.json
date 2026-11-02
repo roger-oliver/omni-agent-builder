@@ -13,9 +13,21 @@
         "type": "object",
         "required": ["clone_base_path", "stack_selection_mode", "repos", "branch_strategy", "github"],
         "additionalProperties": false,
+        "if": { "properties": { "stack_selection_mode": { "const": "auto_from_registry" } }, "required": ["stack_selection_mode"] },
+        "then": { "required": ["stack"] },
         "properties": {
           "clone_base_path": { "type": "string" },
-          "stack_selection_mode": { "type": "string", "enum": ["always_ask"] },
+          "stack_selection_mode": { "type": "string", "enum": ["always_ask", "auto_from_registry"] },
+          "stack": {
+            "type": "object",
+            "required": ["backend", "frontend"],
+            "additionalProperties": false,
+            "properties": {
+              "backend": { "type": "string", "enum": ["rust", "python", "csharp"] },
+              "frontend": { "type": "string", "enum": ["vue", "react"] },
+              "notes": { "type": "string" }
+            }
+          },
           "repos": {
             "type": "object",
             "additionalProperties": {

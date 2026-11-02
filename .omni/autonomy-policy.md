@@ -18,6 +18,27 @@ Pattern semantics (OpenCode): last matching rule wins — catch-all `"*"` first,
 
 Force-push (`git push --force*`, `-f`, `--delete`), `rm -rf*`, `gh repo create/delete/edit*`, `git remote add/remove*`, `git init*`, `sudo*`, `chown*`, `dd`, `mkfs*`, `shutdown`/`reboot`. No agent may run these; escalate to the human instead.
 
+## Decision autonomy (what to decide vs ask)
+
+The orchestrator decides autonomously within these bounds and records every
+autonomous decision (ADR when significant, activity journal always).
+
+| Class | Behavior | Examples |
+|---|---|---|
+| **Decide + log** | Proceed without asking | specialist/model choice within policy; parallelization and scheduling; file layout, naming, formatting; test strategy details; refactors within scope; retry loops within limits; which artifacts to read; documented assumptions for reversible gaps; ADRs for low-risk choices |
+| **Ask** | Batch and escalate | stack change (when the registry has no approved stack); **new major dependency** (new framework/service/runtime — not existing deps or version bumps); public API contract change; irreversible data operations; security-sensitive choices; scope/requirement conflicts; cross-product architecture |
+| **Never** | Human only (unchanged) | merge to `main`; production deploy/rollback execution; repo create/delete; force-push; visibility/branch protection; secrets handling |
+
+**Assumption budget.** The orchestrator may proceed with up to **3 documented
+assumptions per feature**. Each assumption is written to the activity journal
+and to the relevant artifact under `Open Questions`, with its rationale. A
+blocking assumption (scope, stack, security, irreversible) is asked
+immediately and does not consume the budget.
+
+**One voice.** Only the orchestrator talks to the user. Subagents return
+`Open Questions` in their output; the orchestrator batches all questions from
+parallel agents into a single message.
+
 ## Logging duties (history preservation)
 
 1. **Git trail** — allowed commits and feature-branch pushes remain visible via SHAs, branches, and PRs.

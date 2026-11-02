@@ -38,7 +38,9 @@ Blueprint document → `decision_logs/docs/architecture/blueprint-<feature>.md` 
 ## Mandatory blueprint phases (in order, never skip)
 
 ### Phase 0 – Requirements scoping
-Summarize the feature. List unknowns as numbered questions. **Wait for answers** before Phase 1.
+Summarize the feature. Split unknowns into **blocking** (scope, stack, security, irreversible decisions) and **non-blocking** (reversible detail).
+- Blocking → ask now and **wait for answers** before Phase 1.
+- Non-blocking → proceed using documented assumptions (max 3 per feature, recorded in the blueprint under Open Questions and in the activity journal).
 
 ### Phase 1 – Domain entity modeling
 Entities, attributes, types, relationships (1:1/1:N/M:N) with keys, lifecycle events. ER sketch (Mermaid) — full ERD delegated to `data-schema-modeler` with a reference here.

@@ -4,6 +4,11 @@
     "example-product": {
       "clone_base_path": "~/omni-projects",
       "stack_selection_mode": "always_ask",
+      "stack": {
+        "backend": "rust",
+        "frontend": "vue",
+        "notes": "Example only — switch stack_selection_mode to auto_from_registry to use this without prompting"
+      },
       "repos": {
         "decision_logs": {
           "ssh_url": "git@github.com:org/example-product-decisions.git",

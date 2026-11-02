@@ -18,7 +18,7 @@ Every handoff between Omni agents is a **handoff packet**. Do not rely on hidden
 | Done-when | Testable completion criteria |
 | Verification command | Exact command(s) that prove Done-when |
 
-## Phase gates (orchestrator runs these in order)
+## Phase gates (gates run in order — agents within a gate's parallel group run concurrently)
 
 | Gate | Producer | Artifact → path in `decision_logs` | Next |
 |---|---|---|---|
@@ -34,6 +34,36 @@ Every handoff between Omni agents is a **handoff packet**. Do not rely on hidden
 | G10 PR validation | `pr-validator` + `github-operator` | PR comments; merge to `develop` (merge commit) | `traceability-keeper` |
 | G11 Governance | `traceability-keeper`, `technical-writer` | RTM → `docs/traceability/`; docs → `docs/`; release notes → `docs/release-notes/` | `release-manager` |
 | G12 Release | `release-manager`, `rollback-manager` | Release plan → `docs/release-notes/` | human approval for `main` |
+
+## Parallelism
+
+An agent is spawnable **in parallel** when all three hold:
+
+1. its input artifacts exist (it is not waiting on another in-flight agent), and
+2. its output paths are disjoint from every other in-flight agent, and
+3. it shares no mutable resource (same repo working tree, same file).
+
+Parallel groups:
+
+| Gate | Parallel group |
+|---|---|
+| G6 Design | `[data-schema-modeler ∥ api-contract-designer ∥ ui-ux-designer]` (after `solution-architect`) |
+| G8 Test | `[unit-test-generator ∥ integration-tester ∥ e2e-test-engineer ∥ load-simulator ∥ accessibility-auditor]`, then `[qa-validator ∥ uat-mimic]` |
+| G9 Security | `[sast-scanner ∥ dast-tester ∥ dependency-auditor]` |
+| G11 Governance | `[traceability-keeper ∥ technical-writer]` |
+| G12 Release | `[rollback-manager ∥ pipeline-engineer]` while `release-manager` prepares |
+
+Safe cross-gate overlaps: e2e specs authored from `UC`/`AC` during build; SAST per commit; `codebase-explorer` per repository.
+
+Rules:
+
+- **One writer per repository or file** at a time; when outputs overlap, serialize.
+- Parallelize across repos or over disjoint artifact paths only.
+- Cap at ≤ 5 concurrent agents (provider rate limits).
+- Collect compact summaries — the orchestrator's context is the accumulator; files are the memory.
+- Only the orchestrator asks the user; batch subagent `Open Questions` into one message.
+
+Anti-patterns: parallel builders on the same repo/branch; two writers to one artifact; validating the same PR twice.
 
 ## Rules
 

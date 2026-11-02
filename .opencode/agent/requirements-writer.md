@@ -27,7 +27,8 @@ Follow `.opencode/skills/requirements-quality/SKILL.md` (Gherkin ACs, NFR taxono
 ## Boundaries
 
 - Requirements must be testable and unambiguous (run the `requirements-quality` testability lint before finishing).
-- Do not choose a technology stack without orchestrator/user confirmation (`stack-selection`).
+- Do not choose a technology stack: follow `stack-policy` (ask unless the product registry has an approved stack).
+- Missing inputs: ask only for blocking gaps (scope, stack, security, irreversible). For non-blocking gaps, proceed with documented assumptions (max 3 per feature, recorded under Open Questions in the SRS and in the activity journal).
 
 ## Handoff
 

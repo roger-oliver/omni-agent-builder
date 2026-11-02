@@ -379,3 +379,34 @@ User-created agent integrated into the project (roster 39 → 40).
   deployment infrastructure).
 - Rosters/docs updated: README (40 agents), blueprint §8 (#40) + §17 count,
   model-allocation T2 list, orchestrator on-demand specialists section.
+
+## 21. Parallel execution + decision autonomy (2026-11-02)
+
+User request: make agent work genuinely parallel where possible and stop
+asking for decisions the orchestrator can make itself.
+
+Parallelism (docs/instructions only — the runtime already supports concurrent
+task spawning):
+- Orchestrator: new "Parallel execution" section — same-message spawning,
+  parallel groups per gate (G6/G8/G9/G11/G12), safe cross-gate overlaps,
+  one-writer-per-repo rule, ≤5 concurrency cap, compact result collection,
+  batched questions (one voice).
+- `sdlc-handoffs`: new "Parallelism" section (spawnability check, groups,
+  conflict rules, anti-patterns); gate header now distinguishes ordered gates
+  from concurrent groups.
+
+Decision autonomy (user-approved boundary):
+- `.omni/autonomy-policy.md`: decide/ask/never matrix + assumption budget (3
+  per feature, logged) + one-voice rule.
+- Stack: `stack_selection_mode` gains `auto_from_registry` (schema
+  conditional requires the `stack` block; ADR recorded; falls back to asking
+  when incomplete). Documented in README + stack policy.
+- `solution-architect`: Phase 0 splits blocking vs non-blocking questions
+  (final blueprint approval retained per user decision).
+- `backend-rust-engineer`: stages run autonomously with reports; research
+  autonomous; dependency approval limited to new frameworks/services/runtimes
+  (crate rules kept). Other builders aligned.
+- `requirements-writer`: non-blocking gaps become documented assumptions.
+- Unchanged (human-only): merge to `main`, production deploy/rollback,
+  repo create/delete, force-push, secrets handling; pr-validator 3-loop cap;
+  infra apply approvals.

@@ -39,6 +39,24 @@ immediately and does not consume the budget.
 `Open Questions` in their output; the orchestrator batches all questions from
 parallel agents into a single message.
 
+## Development autonomy (local-first loop)
+
+During G7–G9 (build → local verification → manual test), agents work autonomously: implement, bring up the local environment, migrate a per-iteration test database, run tests, fix, and repeat — without per-step approvals.
+
+Stop and report only when:
+
+1. a **problem decision point** is discovered (conflicting requirements, irreversible choice, a blocked test with no clear fix);
+2. an action is **blocked** (push rejected, git restriction, auth/credential missing, deploy/release needed, or a prompt in the deny tier);
+3. the action belongs to the **Never tier** or is the **release/deploy handoff** — the user runs release/deploy commands.
+
+Before a candidate PR may merge to `develop`:
+
+- the local environment is up (`local_env`), the per-iteration test database is migrated, and the automated tests are green;
+- the **manual test document** exists (`manual-test-plan`) and the user has approved the manual test;
+- then the approved candidate PR is merged with a merge commit.
+
+After the merge, sync the local dev database through the project's migration script (`local-env-engineer`).
+
 ## Logging duties (history preservation)
 
 1. **Git trail** — allowed commits and feature-branch pushes remain visible via SHAs, branches, and PRs.

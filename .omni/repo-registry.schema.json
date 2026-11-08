@@ -28,6 +28,51 @@
               "notes": { "type": "string" }
             }
           },
+          "local_env": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "runtime": { "type": "string", "enum": ["docker", "podman", "local", "none"] },
+              "services": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "kind"],
+                  "additionalProperties": true,
+                  "properties": {
+                    "name": { "type": "string" },
+                    "kind": { "type": "string" },
+                    "engine": { "type": "string" },
+                    "container": { "type": "string" },
+                    "host": { "type": "string" },
+                    "port": { "type": "integer" },
+                    "test_db_prefix": { "type": "string" },
+                    "dev_db": { "type": "string" }
+                  }
+                }
+              },
+              "scripts": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "up": { "type": "string" },
+                  "down": { "type": "string" },
+                  "migrate": { "type": "string" },
+                  "query": { "type": "string" },
+                  "seed": { "type": "string" }
+                }
+              },
+              "health_urls": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "worktrees": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "root": { "type": "string" },
+              "branch_prefix": { "type": "string" }
+            }
+          },
           "repos": {
             "type": "object",
             "additionalProperties": {

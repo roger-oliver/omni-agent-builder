@@ -1,6 +1,6 @@
 # Omni-Agent-Builder
 
-**An OpenCode-based software factory: 40 specialized AI agents, 19 reusable skills, and enforceable SDLC policies that orchestrate the full product lifecycle — business context, requirements, architecture, data/API design, UI/UX, implementation (Rust/Python/C#/Vue/React), testing, security, observability, releases, and legacy reverse-engineering — across user-registered GitHub repositories, with human-approval gates and decision-log discipline built in.**
+**An OpenCode-based software factory: 41 specialized AI agents, 21 reusable skills, and enforceable SDLC policies that orchestrate the full product lifecycle — business context, requirements, architecture, data/API design, UI/UX, implementation (Rust/Python/C#/Vue/React), testing, security, observability, releases, and legacy reverse-engineering — across user-registered GitHub repositories, with human-approval gates and decision-log discipline built in.**
 
 Omni-Agent-Builder is a meta-project: it configures the agent system only. It must not contain generated product frontend code, backend code, UI assets, legacy source code, or product decision logs. Product work happens in separate private GitHub repositories created by the user and registered with the orchestrator.
 
@@ -16,8 +16,8 @@ Implemented in this repo:
 - `.omni/repo-registry.schema.json`: JSON schema for validating the registry
 - Omni policies under `.omni/` (autonomy, stack, dependency, GitHub, decision-log, model-allocation, legacy-analysis)
 - Shared anti-hallucination and operating contract: `.omni/agent-operating-contract.md`
-- 40 OpenCode agent prompt files under `.opencode/agent/`
-- 19 reusable OpenCode skills under `.opencode/skills/`
+- 41 OpenCode agent prompt files under `.opencode/agent/`
+- 21 reusable OpenCode skills under `.opencode/skills/`
 - Global setup scripts under `scripts/` (installer + interactive project setup for bash and fish)
 - `docs/vocabulary.md` (shared jargon glossary) and `docs/agent-skill-audit-2026-09-28.md` (revision tracking)
 
@@ -80,6 +80,9 @@ my-project/
 - Secrets must be environment variables and must never be committed.
 - Stack selection follows `stack-policy`: ask by default, or use the product's approved stack when `stack_selection_mode: auto_from_registry`.
 - Agents run in parallel when independent: fan-out gates are parallelized and user questions are batched.
+- Local-first delivery: candidate branches are verified locally (environment up, per-iteration test database migrated, automated tests green) before review.
+- The user's manual-test approval gates the merge to `develop`; release and deploy commands stay with the user.
+- Development runs autonomously (build/migrate/test/fix) and stops only on a problem decision, a blocked action, or a human-only action.
 - Engineering agents are language-specialized but not framework-locked.
 - Passing PRs may auto-merge into `develop`.
 - Merge to `main`, production deployment, rollback execution, repo creation, repo deletion, and force-push remain human-approved.
@@ -99,7 +102,9 @@ my-project/
 │   ├── setup-omni-project.sh          # Interactive project setup (bash)
 │   ├── setup-omni-project.fish        # Interactive project setup (fish)
 │   ├── apply-repo-security.sh         # Branch protection + repo hardening
-│   └── check-permissions.py           # Autonomy permission map validator (CI)
+│   ├── check-permissions.py           # Permission map validator (CI)
+│   ├── autonomy-map.json              # Canonical development-autonomy bash map
+│   └── omni-refresh-permissions.py    # Generates project-scoped permissions
 ├── SECURITY.md                        # Vulnerability reporting + contribution rules
 ├── .github/
 │   ├── workflows/validate.yml         # PR CI gate (structure + secret scan)
@@ -125,9 +130,9 @@ my-project/
 │   └── legacy-analysis-policy.md
 └── .opencode/
     ├── agent/
-    │   └── 40 agent prompt files
+    │   └── 41 agent prompt files
     └── skills/
-        └── 19 reusable skill folders
+        └── 21 reusable skill folders
 ```
 
 ## Important Files
@@ -228,6 +233,7 @@ DevOps, release, and observability agents:
 
 - `pipeline-engineer`
 - `infra-engineer`
+- `local-env-engineer`
 - `rollback-manager`
 - `release-manager`
 - `logging-strategist`
@@ -271,7 +277,9 @@ Craft and quality:
 - `observability-standards`: log schema, OpenTelemetry, SLI/SLO, no-alert-without-runbook.
 - `ui-ux-standards`: WCAG 2.2 AA checklist, W3C design tokens, state matrix.
 - `cicd-release`: required pipeline jobs, promotion gates, SemVer, rollback matrix.
-- `pr-validation`: 10-row PR validation checklist and the bounded fix loop.
+- `pr-validation`: 12-row PR validation checklist (incl. local verification + manual-test approval) and the bounded fix loop.
+- `local-environment`: project-driven local environment lifecycle (up/down, per-iteration test DBs, migrations, post-merge dev DB sync).
+- `manual-test-plan`: per-delivery manual test document template, iteration loop, and approval gate.
 
 ## OpenCode Configuration
 
@@ -282,8 +290,8 @@ Craft and quality:
 - Small model: `opencode/deepseek-v4.1-flash`
 - Skills path: `.opencode/skills`
 - Providers: Xiaomi MiMo (`mimo/...`), OpenCode Zen (`opencode/...`)
-- Security permissions: three-tier bash model per `.omni/autonomy-policy.md` — `allow` (checks/reads/commits/feature-branch pushes run silently), `ask` (rm/mv/curl/merges/config changes stop for approval), `deny` (force-push, `rm -rf`, repo create/delete, sudo — never); allow read/glob/grep; ask for edit/webfetch
-- External directory access: the example clone base path `~/omni-projects/**` is allowed; if you chose a different base directory, update this allow in `opencode.json` (otherwise agents will simply ask for permission each time)
+- Security permissions: three-tier model per `.omni/autonomy-policy.md` — the development-autonomy map allows reads/checks/tests/builds/project scripts/feature pushes/CI status; consequential actions (rm/mv/curl/docker compose/raw DB clients/merges/config) stop for approval; dangerous actions (force-push, `rm -rf`, repo create/delete, sudo) are blocked. Project-scoped paths and per-repo CI patterns are generated from the registry.
+- External directory access: generated per project (`scripts/omni-refresh-permissions.py`) — project dir, registered repos, clone base, worktree root, and `/tmp/opencode` are allowed.
 
 To customize, edit `opencode.json` directly or refer to `manual-opencode-setup.md` for the full configuration reference.
 
@@ -435,6 +443,18 @@ Forbidden unless policy changes:
 7. When validation passes, the PR may be merged automatically into `develop`.
 8. Merge to `main` remains human-approved.
 
+## Local-first delivery loop
+
+1. The orchestrator spawns builders on a candidate branch/worktree (`worktrees.root`, default `<project>/.worktrees/`).
+2. `local-env-engineer` brings up the environment (`local_env`) and creates a per-iteration test database via the project's migration script.
+3. Builders and test agents implement, migrate, and test autonomously; the orchestrator stops only on a problem decision, a blocked action, or a human-only action.
+4. `qa-validator` writes the manual test document (`<repo>/docs/qa/manual-tests/<delivery>.md`, template in `manual-test-plan`) and registers it in the decision_logs index.
+5. The user tests manually and reports problems; fixes + document updates are appended (problem points emphasized) until the user approves.
+6. After approval, the approved candidate PR is merged to `develop` (merge commit).
+7. After the merge, `local-env-engineer` syncs the local dev database with the project's migration script.
+
+Release and deploy commands are the user's responsibility.
+
 ## Verification Commands
 
 Useful local checks for this repository:
@@ -445,7 +465,8 @@ python3 -m json.tool .omni/orchestrator.config.json >/dev/null
 python3 -m json.tool .omni/orchestrator.config.example.json >/dev/null
 python3 -m json.tool .omni/repo-registry.schema.json >/dev/null
 git diff --check
-python3 scripts/check-permissions.py        # autonomy permission map + mirrors
+python3 scripts/check-permissions.py        # permission map + mirrors (--no-global before global sync)
+./scripts/omni-refresh-permissions.py --check  # project permissions in sync
 ./scripts/apply-repo-security.sh --check   # remote protection state
 ```
 

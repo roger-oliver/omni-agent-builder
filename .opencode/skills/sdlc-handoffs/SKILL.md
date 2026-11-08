@@ -35,6 +35,18 @@ Every handoff between Omni agents is a **handoff packet**. Do not rely on hidden
 | G11 Governance | `traceability-keeper`, `technical-writer` | RTM → `docs/traceability/`; docs → `docs/`; release notes → `docs/release-notes/` | `release-manager` |
 | G12 Release | `release-manager`, `rollback-manager` | Release plan → `docs/release-notes/` | human approval for `main` |
 
+## Local verification gate (G7 → G10)
+
+A candidate PR may enter G10 only when:
+
+1. `local-env-engineer` reports the local environment up (health checks green) and the per-iteration test database migrated;
+2. automated tests are green for the scoped requirements;
+3. the manual test document exists (`manual-test-plan`) and is registered in the decision_logs index;
+4. the user has approved the manual test — then the candidate PR merges to `develop` with a merge commit;
+5. after the merge, `local-env-engineer` syncs the local dev database via the project's migration script.
+
+Release and deploy commands remain the user's responsibility.
+
 ## Parallelism
 
 An agent is spawnable **in parallel** when all three hold:

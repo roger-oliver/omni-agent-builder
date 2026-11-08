@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""Validate the autonomy permission map and its mirrors.
+"""Validate the development-autonomy permission map and its mirrors.
 
-1. Simulates last-matching-rule-wins against a sample command matrix
-   (approximation of OpenCode's parsed-command matching).
-2. Checks that the bash map in opencode.json, the global opencode.jsonc
-   (when present) and omni-orchestrator.md frontmatter are identical.
+Checks:
+  1. resolution matrix (last-matching-rule-wins) against sample commands
+  2. repo opencode.json bash map == canonical scripts/autonomy-map.json
+  3. omni-orchestrator.md frontmatter == canonical map
+  4. all dev-loop agents' frontmatter == canonical map
+  5. global ~/.config/opencode/opencode.jsonc == canonical map (skipped with
+     --no-global, or when the file is absent — e.g. in CI)
 
-Exit 0 = all good; exit 1 = unexpected simulation result or map mismatch.
+Exit 0 = all good; exit 1 = mismatch or unexpected resolution.
 """
 import fnmatch
 import json
@@ -14,34 +17,68 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parent
+
+DEV_AGENTS = [
+    "backend-rust-engineer", "backend-python-engineer", "backend-csharp-engineer",
+    "frontend-vue-engineer", "frontend-react-engineer", "unit-test-generator",
+    "integration-tester", "e2e-test-engineer", "load-simulator", "qa-validator",
+    "uat-mimic", "accessibility-auditor", "data-migration-engineer",
+    "local-env-engineer", "pr-validator", "github-operator", "release-manager",
+    "codebase-explorer", "traceability-keeper", "technical-writer", "solution-architect",
+]
 
 MATRIX = [
-    # (command, expected action)
+    # reads / checks
     ("git status --porcelain", "allow"),
     ("git log --oneline -5", "allow"),
     ("git diff HEAD", "allow"),
-    ("git show HEAD", "allow"),
-    ("git fetch origin", "allow"),
-    ("git add -A", "allow"),
-    ('git commit -m "msg"', "allow"),
-    ("git push origin feature/REQ-014-x", "allow"),
-    ("git push -u origin feature/x", "allow"),
     ("git switch develop", "allow"),
+    ("git pull --ff-only", "allow"),
     ("ls -la", "allow"),
     ("cat README.md", "allow"),
+    ("diff a b", "allow"),
+    ("ss -ltnp", "allow"),
+    ("df -h /tmp", "allow"),
     ("python3 -m json.tool opencode.json", "allow"),
     ("bash -n scripts/install.sh", "allow"),
-    ("grep -rn TODO .", "allow"),
+    # local mutations / feature pushes
+    ("git add -A", "allow"),
+    ('git commit -m "msg"', "allow"),
+    ("git checkout -b feature/x", "allow"),
+    ("git push origin feature/REQ-014-x", "allow"),
+    ("git push -u origin feature/x", "allow"),
+    # CI / read-only GitHub
+    ("gh run list --limit 5", "allow"),
+    ("gh run view 123", "allow"),
+    ("gh pr checks 7", "allow"),
+    # project scripts / tests / builds
+    ("bash scripts/dev-up.sh", "allow"),
+    ("bash scripts/db-migrate.sh", "allow"),
+    ("bash docs/qa/migrate.sh", "allow"),
+    ("npx vitest run src/x.spec.ts", "allow"),
+    ("npm test", "allow"),
+    ("cargo test", "allow"),
+    ("cargo clippy -- -D warnings", "allow"),
+    ("dotnet build", "allow"),
+    ("pytest -q", "allow"),
+    # local service inspection / health
+    ("docker ps", "allow"),
+    ("docker logs app", "allow"),
+    ("curl http://127.0.0.1:8080/health", "allow"),
+    # ask
     ("rm foo.txt", "ask"),
     ("mv a b", "ask"),
-    ("cp a b", "ask"),
     ("curl https://example.com", "ask"),
+    ("docker compose up -d", "ask"),
+    ("psql -c 'select 1'", "ask"),
+    ("npm install left-pad", "ask"),
+    ("npm run dev", "ask"),
     ("git push origin develop", "ask"),
-    ("git merge main", "ask"),
     ("git checkout main", "ask"),
     ("git reset HEAD~1", "ask"),
-    ("git config --global user.email x", "ask"),
+    # deny
     ("rm -rf /tmp/x", "deny"),
     ("git push --force origin main", "deny"),
     ("git push -f origin x", "deny"),
@@ -69,11 +106,10 @@ def load_json(path: Path) -> dict:
     return json.loads(text)
 
 
-def load_frontmatter_map(path: Path) -> dict | None:
+def frontmatter_map(path: Path) -> dict | None:
     try:
         import yaml  # type: ignore
     except ImportError:
-        print("[!] PyYAML not available - skipping frontmatter check")
         return None
     text = path.read_text()
     fm = text.split("---")[1]
@@ -82,35 +118,62 @@ def load_frontmatter_map(path: Path) -> dict | None:
 
 
 def main() -> int:
+    no_global = "--no-global" in sys.argv
+    canonical = dict(json.loads((HERE / "autonomy-map.json").read_text())["bash"])
     failures = 0
 
-    # 1. Simulation matrix
-    repo_map = load_json(REPO / "opencode.json")["permission"]["bash"]
+    # 1. matrix
     for cmd, expected in MATRIX:
-        got = resolve(cmd, repo_map)
+        got = resolve(cmd, canonical)
         if got != expected:
             print(f"[x] '{cmd}' -> {got} (expected {expected})")
             failures += 1
-    if failures == 0:
-        print(f"[+] permission matrix OK ({len(MATRIX)} commands, {len(repo_map)} rules)")
+    if not failures:
+        print(f"[+] permission matrix OK ({len(MATRIX)} commands, {len(canonical)} rules)")
 
-    # 2. Mirror sync checks
-    global_path = Path.home() / ".config/opencode/opencode.jsonc"
-    if global_path.exists():
-        gmap = load_json(global_path)["permission"]["bash"]
-        if gmap != repo_map:
-            print("[x] global opencode.jsonc bash map differs from opencode.json")
+    # 2. repo config
+    repo_map = load_json(REPO / "opencode.json")["permission"]["bash"]
+    if repo_map != canonical:
+        print("[x] opencode.json bash map differs from scripts/autonomy-map.json")
+        failures += 1
+    else:
+        print("[+] opencode.json map in sync")
+
+    # 3. orchestrator frontmatter
+    orch = frontmatter_map(REPO / ".opencode/agent/omni-orchestrator.md")
+    if orch is None:
+        print("[!] PyYAML not available — skipping frontmatter checks")
+    elif orch != canonical:
+        print("[x] omni-orchestrator.md frontmatter differs from canonical map")
+        failures += 1
+    else:
+        print("[+] omni-orchestrator.md frontmatter in sync")
+
+    # 4. dev-loop agents
+    if orch is not None:
+        bad = []
+        for name in DEV_AGENTS:
+            m = frontmatter_map(REPO / ".opencode/agent" / f"{name}.md")
+            if m != canonical:
+                bad.append(name)
+        if bad:
+            print(f"[x] dev agents out of sync: {bad}")
             failures += 1
         else:
-            print("[+] global opencode.jsonc map in sync")
+            print(f"[+] {len(DEV_AGENTS)} dev agents in sync")
 
-    fm_map = load_frontmatter_map(REPO / ".opencode/agent/omni-orchestrator.md")
-    if fm_map is not None:
-        if fm_map != repo_map:
-            print("[x] omni-orchestrator.md frontmatter bash map differs from opencode.json")
-            failures += 1
+    # 5. global config
+    if not no_global:
+        gl = Path.home() / ".config/opencode/opencode.jsonc"
+        if gl.exists():
+            gmap = load_json(gl)["permission"]["bash"]
+            if gmap != canonical:
+                print("[x] global opencode.jsonc map differs (run the global sync)")
+                failures += 1
+            else:
+                print("[+] global opencode.jsonc map in sync")
         else:
-            print("[+] omni-orchestrator.md frontmatter map in sync")
+            print("[i] global config not present — skipped")
 
     if failures:
         print(f"\n{failures} problem(s) found")

@@ -17,6 +17,9 @@ Shared glossary of jargon used across Omni agents, skills, policies, and docs. E
 | **Decision autonomy** | The decide / ask / never matrix in `.omni/autonomy-policy.md` |
 | **Assumption budget** | Max 3 documented assumptions per feature when proceeding autonomously |
 | **Parallel group** | Set of independent agents spawned concurrently within a gate |
+| **Local environment** | Project-defined local services and databases (`local_env` in the registry) |
+| **Candidate branch** | Feature branch/worktree that must pass local verification and manual test before merging to `develop` |
+| **Manual test document** | Per-delivery step list in `<repo>/docs/qa/manual-tests/`, registered in decision_logs; approval gates the merge |
 | **Autonomy tiers** | `allow` (silent) / `ask` (stop) / `deny` (never) command classification per `.omni/autonomy-policy.md` |
 | **Activity journal** | Append-only session history in the decision repo: `docs/traceability/activity-log.md` |
 | **Deny list** | Commands no agent may run without a human (force-push, `rm -rf`, repo create/delete, sudo…) |

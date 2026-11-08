@@ -30,6 +30,8 @@ All environment operations are **project-driven**: read `.omni/orchestrator.conf
 
 If `local_env` or a required script is missing → **stop and ask** (blocking gap). Do not invent defaults.
 
+Run the scripts from `local_env.cwd` (relative to the project root) when set — scripts may live inside a registered repo; otherwise run them from the project root.
+
 ## Lifecycle
 
 1. **Up** — run `scripts.up`; verify the configured health URLs/ports (Evidence).

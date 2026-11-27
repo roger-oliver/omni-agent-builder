@@ -26,6 +26,10 @@ description: Use when creating unit, integration, E2E, or load tests — defines
 - Branch coverage target: match repo convention if one exists; otherwise state the achieved number, do not invent a mandate.
 - Flaky tests are defects (`DEF-###`) — do not silently retry.
 
+## Local database tests
+
+Database-backed tests run against a per-iteration local test database created by `local-env-engineer` (via `local_env` scripts). Migrations run before tests and the ledger is verified; synthetic data only; no test touches staging or production.
+
 ## Test data policy
 
 - **Synthetic data only.** No real PII, no production dumps, no real credentials (use env var names).

@@ -228,6 +228,19 @@ Create this manually in the repository root or merge it into your existing OpenC
 
 Important: OpenCode resolves permission patterns with **last matching rule wins** — put the catch-all `"*"` first and specific overrides (including denies) after it. See `.omni/autonomy-policy.md` for the tier model and `scripts/check-permissions.py` for the sync checker.
 
+## 3.1 Permissions and local autonomy
+
+Permissions are three-tier (see `.omni/autonomy-policy.md`): `allow` for reads/checks/tests/builds/project scripts/feature pushes/CI status, `ask` for consequential operations, `deny` for dangerous ones. The canonical bash map lives in `scripts/autonomy-map.json` and is mirrored in the agents.
+
+Project-scoped paths and per-repo CI patterns are **generated** from `.omni/orchestrator.config.json`:
+
+```bash
+omni-refresh-permissions .            # writes/updates ./opencode.json
+omni-refresh-permissions . --check    # report drift
+```
+
+The generator allows the project directory, every registered repo, the clone base path, the worktree root, and `/tmp/opencode` — no project or infrastructure names are hardcoded. Restart OpenCode after regenerating.
+
 ## 4. Optional Playwright MCP
 
 Add this manually only when you want browser/UI validation:

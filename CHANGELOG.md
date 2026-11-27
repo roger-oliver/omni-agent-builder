@@ -3,6 +3,55 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## v0.4.0 — 2026-11-27
+
+Local-first delivery workflow, project-scoped autonomy, and an orchestrator
+routing test suite.
+
+### Added
+- **Local-first candidate workflow** (PR #13): candidate branches are verified
+  against a per-iteration local test database (project-defined `local_env`), a
+  per-delivery manual test document gates the merge to `develop`, and the local
+  dev database is synced after merges.
+- **`local-env-engineer` agent** (roster 40 → 41): environment up/down,
+  per-iteration test DBs, migrations, health/ledger verification, and
+  post-merge dev-DB sync via the project's own scripts.
+- **`local-environment` and `manual-test-plan` skills**: engine/runtime-agnostic
+  lifecycle, iteration loop, and approval gate; `qa-validator` owns the manual
+  test document.
+- **Registry schema**: optional `local_env` and `worktrees` blocks, plus
+  `local_env.cwd` for scripts in nested repos.
+- **Project-scoped development autonomy** (PR #13): canonical 151-rule
+  dev-autonomy map (`scripts/autonomy-map.json`) mirrored in the orchestrator
+  and 21 dev-loop agents; `scripts/omni-refresh-permissions.py` generates
+  project path and per-repo CI permissions from the registry — idempotent,
+  with `--check`, and no project or infra names hardcoded.
+- **Orchestrator routing suite** (PR #14):
+  `scripts/test-orchestrator-routing.sh` — 44 behavioral checks (36
+  single-agent, 4 no-over-delegation, 4 multi-agent plans) with `--suite`,
+  `--model`, `--timeout`, and `--keep`; supports re-testing after a model
+  change.
+
+### Changed
+- **Autonomy policy**: development proceeds autonomously (local env, test DB,
+  tests, fix loop) and stops only on a problem decision, a blocked action, or a
+  human-only action. Release and deploy commands remain the user's.
+- **Setup/install**: `setup-omni-project.{sh,fish}` and `install.{sh,fish}`
+  invoke the permission generator; project permissions are regenerated from the
+  registry.
+- **Docs**: README, manual setup, blueprint, vocabulary, and the agent/skill
+  audit updated for 41 agents / 21 skills and the local-first workflow.
+
+### Fixed
+- `local_env.cwd` is optional, so scripts can live in nested repos
+  (`e07bfb2`).
+
+### Notes
+- Configuration, scripts, and docs only; no product-repo breaking changes.
+  Existing registries remain valid — the new blocks are optional.
+- Adopt via `install.sh` / `setup-omni-project` or re-run
+  `omni-refresh-permissions` for project-scoped permissions.
+
 ## v0.3.0 — 2026-11-02
 
 Infrastructure agent, parallel execution, and decision autonomy.

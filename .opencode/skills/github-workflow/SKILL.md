@@ -31,6 +31,16 @@ description: Use when cloning registered repos, creating branches, pushing commi
 
 - Labels: `needs-work`, `approved`, `security`, `breaking`, `release-candidate`. Apply `needs-work` on failed validation; remove on pass.
 
+## Worktrees
+
+Work in a worktree from the current `origin/develop`, under the project worktree root (default `<project>/.worktrees/`; see `worktrees.root` in the registry):
+
+```sh
+git worktree add <project>/.worktrees/<name> -b <type>/<slug> origin/develop
+```
+
+Never commit or push directly to `develop`/`main`; commit on the worktree branch → push → PR to `develop` (merge commit). Merge only after the manual test is approved (`manual-test-plan`).
+
 ## Forbidden
 
 - Creating repositories.

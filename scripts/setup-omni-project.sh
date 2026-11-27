@@ -144,6 +144,15 @@ else
     print_warning "repo-registry.schema.json not found - you may need to copy it manually"
 fi
 
+# Generate project-scoped permissions (paths + repo-scoped CI patterns)
+if [ -f "$HOME/.config/opencode/omni-refresh-permissions.py" ]; then
+    python3 "$HOME/.config/opencode/omni-refresh-permissions.py" "$PWD" >/dev/null 2>&1 \
+        && print_success "Generated project permissions (opencode.json)" \
+        || print_warning "Permission generation failed - run omni-refresh-permissions manually"
+else
+    print_warning "omni-refresh-permissions not installed - run scripts/install.sh"
+fi
+
 # Summary
 print_header "Setup Complete"
 echo -e "${GREEN}Project '${PRODUCT_NAME}' is ready!${NC}"

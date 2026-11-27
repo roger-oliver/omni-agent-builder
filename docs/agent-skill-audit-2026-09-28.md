@@ -410,3 +410,39 @@ Decision autonomy (user-approved boundary):
 - Unchanged (human-only): merge to `main`, production deploy/rollback,
   repo create/delete, force-push, secrets handling; pr-validator 3-loop cap;
   infra apply approvals.
+
+## 22. Local-first candidate workflow + project-scoped autonomy (2026-11-02)
+
+User request: work on candidate branches, verify everything locally against a
+per-iteration database, produce a per-delivery manual test document, merge
+only after user approval, and run development autonomously with permissions
+scoped to the project's own repos.
+
+Implemented (infra- and project-agnostic by design):
+- **Canonical dev-autonomy map** `scripts/autonomy-map.json` (151 rules,
+  last-match-wins), mirrored in `opencode.json`, the orchestrator and 21
+  dev-loop agents (builders, testers, QA, migrations, local env, PR/GitHub,
+  release, explorer, traceability, writer, architect). Validated by
+  `check-permissions.py` (50-command matrix + mirror sync).
+- **`scripts/omni-refresh-permissions.py`**: generates project-scoped
+  permissions from `.omni/orchestrator.config.json` — external_directory for
+  the project, registered repos, clone base, worktree root, `/tmp/opencode`;
+  repo-scoped `gh api .../actions/runs*` patterns derived from each SSH URL.
+  No project/infra names are hardcoded. Installed by `install.sh|.fish` and
+  called by `setup-omni-project.sh|.fish`; `--check` reports drift.
+- **`local_env` + `worktrees` registry blocks** (schema): runtime/services/
+  scripts/health URLs and worktree root are data, never assumptions.
+- **New agent `local-env-engineer`** (T2, on-demand, roster 40 → 41):
+  environment up/down, per-iteration test DB, migrations, ledger/health
+  verification, post-merge dev-DB sync — via project scripts only.
+- **New skills**: `local-environment` (lifecycle, engine-agnostic) and
+  `manual-test-plan` (template, iteration loop, approval gate).
+- **Workflow gates**: local verification before G10, manual-test approval
+  before merging to `develop` (merge commit), post-merge dev-DB sync;
+  release/deploy commands remain the user's.
+- **Autonomy**: development runs autonomously (build/migrate/test/fix); stops
+  only on a problem decision, a blocked action, or a human-only action.
+- Docs updated: README (loop, permissions, counts), manual, blueprint roster/
+  skills, vocabulary, model-allocation (T2), CHANGELOG.
+
+Deferred by instruction: global config sync and merge to `develop`.

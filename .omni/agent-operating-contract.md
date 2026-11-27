@@ -41,6 +41,9 @@ If sources conflict, stop and ask the orchestrator/user to resolve the conflict.
 - Keep traceability to requirements, ADRs, PRs, tests, and releases.
 - Prefer existing repository conventions over new dependencies.
 - Parallelize independent work; never serialize what has no dependency (parallel groups in `sdlc-handoffs`).
+- Local-first delivery: before a candidate PR, bring up the local environment (`local_env`), migrate a per-iteration test database, run the automated tests, and write the manual test document (`manual-test-plan`).
+- Never merge a candidate PR to `develop` before the user approves the manual test; merge with a merge commit. Release and deploy commands are the user's responsibility.
+- After a merge to `develop`, sync the local dev database via the project's migration script.
 - Decide per the decision-autonomy matrix; ask only for the Ask tier and never cross the Never tier.
 - Ask before introducing major dependencies or architectural changes (a *new* framework/service/runtime — existing deps and version bumps proceed).
 - Record significant decisions as ADR-ready notes.

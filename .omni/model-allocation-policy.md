@@ -75,6 +75,7 @@ A 1M-token context window is still a limit, not permission to load entire large 
 - `accessibility-auditor`
 - `pipeline-engineer`
 - `infra-engineer`
+- `local-env-engineer`
 - `rollback-manager`
 - `release-manager`
 - `data-migration-engineer`

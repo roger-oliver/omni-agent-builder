@@ -19,6 +19,10 @@ description: Use when reviewing PRs against requirements, ADRs, acceptance crite
 | 8 | Dependency audit clean (or ADR-noted exceptions) | audit output |
 | 9 | Traceability updated (RTM rows added/updated) | RTM diff |
 | 10 | PR body complete (Summary, IDs, ADRs, Verification commands) | PR body |
+| 11 | Local verification evidence: environment up, test DB migrated, tests green | command output |
+| 12 | Manual test document present, registered in decision_logs, user-approved | doc path + approval |
+
+**Merge rule:** never merge before the user approves the manual test (`manual-test-plan`); merge with a merge commit. Release/deploy commands remain the user's.
 
 Findings use the severity taxonomy and findings table from `security-review` (for security items) or `DEF-###` rows with `High/Medium/Low` for non-security gaps.
 

@@ -458,6 +458,9 @@ No `backend-node-typescript-engineer` is planned. TypeScript/JavaScript are fron
 40. `infra-engineer` (added 2026-11-01)
     - Provisions and manages infrastructure (VMs, networking, k3s, deployment plumbing) on a local homelab or cloud providers (AWS/GCP/Azure/Hetzner/DigitalOcean) with OpenTofu/Terraform + Ansible + cloud-init. Plan-first, approval-gated, never handles secrets. Invoked on demand (no fixed gate).
 
+41. `local-env-engineer` (added 2026-11-02)
+    - Brings up the project's local environment and manages local test/dev databases via project-defined `local_env` scripts (engine/runtime/provider-agnostic). Creates per-iteration test databases, runs migrations, verifies ledgers/health, and syncs the local dev database after merges. Invoked on demand.
+
 ## 9. GitHub Workflow
 
 ### Branches
@@ -631,7 +634,7 @@ Reusable skills should live under:
 .opencode/skills/<skill-name>/SKILL.md
 ```
 
-Recommended skills (19 as of 2026-09-28):
+Recommended skills (21 as of 2026-11-02):
 
 Process and governance:
 
@@ -656,7 +659,9 @@ Craft and quality:
 16. `observability-standards` — log schema, OpenTelemetry, SLI/SLO, no-alert-without-runbook.
 17. `ui-ux-standards` — WCAG 2.2 AA checklist, W3C design tokens, state matrix.
 18. `cicd-release` — required pipeline jobs, promotion gates, SemVer, rollback matrix.
-19. `pr-validation` — 10-row PR validation checklist and the bounded fix loop.
+19. `pr-validation` — 12-row PR validation checklist (incl. local verification + manual-test approval) and the bounded fix loop.
+20. `local-environment` — project-driven local environment lifecycle and local test/dev database management (`local_env`).
+21. `manual-test-plan` — per-delivery manual test document, iteration loop, and approval-gated merge.
 
 ## 15. Commands to Consider
 
@@ -727,7 +732,7 @@ OpenCode commands can be added later in `opencode.json`. Recommended commands:
 
 ## 17. Known Conflicts Resolved
 
-1. **Agent count**: The system is not limited to 24 or 25 agents. The roster includes 40 named agents (34 original + 5 added in the 2026-09-28 audit — E2E testing, release management, data migrations, accessibility, privacy compliance — + infra-engineer added 2026-11-01) including codebase exploration, GitHub, and PR-specific agents.
+1. **Agent count**: The system is not limited to 24 or 25 agents. The roster includes 41 named agents (34 original + 5 added in the 2026-09-28 audit — E2E testing, release management, data migrations, accessibility, privacy compliance — + infra-engineer 2026-11-01 + local-env-engineer 2026-11-02) including codebase exploration, GitHub, and PR-specific agents.
 2. **Node/TypeScript backend**: Excluded. TypeScript/JavaScript are frontend-focused unless this decision changes later.
 3. **Repo creation**: User creates repos. Agents never create repos.
 4. **GitHub authentication**: `GITHUB_TOKEN` only for API operations; SSH keys for Git transport.

@@ -3,6 +3,20 @@
 All notable changes to Omni-Agent-Builder follow [SemVer](https://semver.org).
 Entries cite PRs and ADRs where applicable.
 
+## Unreleased
+
+- **Local-first candidate workflow**: candidate branches are verified against
+  a per-iteration local test database (project-defined `local_env`), a
+  per-delivery manual test document gates the merge to `develop`, and the
+  local dev database is synced after merges. New `local-env-engineer` agent
+  (roster 40 → 41) and `local-environment` / `manual-test-plan` skills.
+- **Project-scoped development autonomy**: canonical dev-autonomy bash map
+  (`scripts/autonomy-map.json`, 151 rules) applied to the orchestrator and 21
+  dev-loop agents; `omni-refresh-permissions.py` generates project-scoped
+  path and per-repo CI permissions from the registry — no project or infra
+  names hardcoded. Development proceeds autonomously and stops only on a
+  problem decision, a blocked action, or a human-only action.
+
 ## v0.3.0 — 2026-11-02
 
 Infrastructure agent, parallel execution, and decision autonomy.

@@ -65,6 +65,12 @@ else
     print_warning "No schema found at $SCHEMA_SRC (skipped)"
 end
 
+# Permission generator + canonical map
+install -m 755 "$REPO_DIR/scripts/omni-refresh-permissions.py" "$DEST/omni-refresh-permissions.py"
+install -m 644 "$REPO_DIR/scripts/autonomy-map.json" "$DEST/autonomy-map.json"
+ln -sfn "$DEST/omni-refresh-permissions.py" "$BIN_DIR/omni-refresh-permissions"
+print_success "Installed omni-refresh-permissions + autonomy-map.json"
+
 # PATH entry points
 ln -sfn "$DEST/setup-omni-project.sh"   "$BIN_DIR/setup-omni"
 ln -sfn "$DEST/setup-omni-project.fish" "$BIN_DIR/setup-omni.fish"
